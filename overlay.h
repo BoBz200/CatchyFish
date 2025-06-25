@@ -5,7 +5,7 @@
 class Overlay {
 public:
   Overlay(int height, int width, int start_y, int start_x);
-  ~Overlay();
+  virtual ~Overlay();
 
   virtual void refresh() = 0;
 
@@ -21,22 +21,31 @@ protected:
 class ProgressBar: public Overlay {
 public:
   ProgressBar(float progress, int height, int width, int start_y, int start_x);
-  ProgressBar(float progress, bool isVerticle, int height, int width, int start_y, int start_x);
   ProgressBar(int height, int width, int start_y, int start_x);
 
-  float getProgress();
-  bool getIsVerticle();
-  void setProgress(float progress);
-  void setIsVerticle(bool isVerticle);
+  float get_progress() const;
+  void set_progress(float progress);
 
-  void refresh();
+  virtual void refresh() = 0;
 
-private:
+protected:
   float progress;
-  bool isVerticle;
-  int emptyChar;
-  int fullChar;
+  int empty_char;
+  int full_char;
+};
 
-  void verticleRefresh();
-  void horizontalRefresh();
+class VerticleProgressBar: public ProgressBar {
+public:
+  VerticleProgressBar(float progress, int height, int width, int start_y, int start_x);
+  VerticleProgressBar(int height, int width, int start_y, int start_x);
+
+  void refresh() override;
+};
+
+class HorizontalProgressBar: public ProgressBar {
+public:
+  HorizontalProgressBar(float progress, int height, int width, int start_y, int start_x);
+  HorizontalProgressBar(int height, int width, int start_y, int start_x);
+
+  void refresh() override;
 };

@@ -20,79 +20,70 @@ ProgressBar(height, width, start_y, start_x) {
   this->progress = progress;
 }
 
-ProgressBar::ProgressBar(float progress, bool isVerticle, int height, int width, int start_y, int start_x) :
-ProgressBar(height, width, start_y, start_x) {
-  this->progress = progress;
-  this->isVerticle = isVerticle;
-}
-
 ProgressBar::ProgressBar(int height, int width, int start_y, int start_x) :
 Overlay(height, width, start_y, start_x) {
   progress = 0;
-  isVerticle = true;
   box(win, 0, 0);
   if (has_colors() == false) {
-    emptyChar = ' ';
-    fullChar = '#';
+    empty_char = ' ';
+    full_char = '#';
   }
   else {
-    emptyChar = ' ';
-    fullChar = ' ' | COLOR_PAIR(1);
+    empty_char = ' ';
+    full_char = ' ' | COLOR_PAIR(1);
   }
 }
 
-float ProgressBar::getProgress() {
+float ProgressBar::get_progress() const {
   return progress;
 }
-bool ProgressBar::getIsVerticle() {
-  return isVerticle;
-}
-void ProgressBar::setProgress(float progress) {
-  if (progress > 1) {
+void ProgressBar::set_progress(float progress) {
+  if (progress > 1.0) {
     this->progress = 1;
     return;
   }
-  if (progress < 0) {
+  if (progress < 0.0) {
     this->progress = 0;
     return;
   }
   this-> progress = progress;
 }
-void ProgressBar::setIsVerticle(bool isVerticle) {
-  this->isVerticle = isVerticle;
-}
 
-void ProgressBar::refresh() {
-  if (isVerticle)
-    verticleRefresh();
-  else
-    horizontalRefresh();
+VerticleProgressBar::VerticleProgressBar(float progress, int height, int width, int start_y, int start_x) :
+ProgressBar(progress, height, width, start_y, start_x) {}
 
-}
+VerticleProgressBar::VerticleProgressBar(int height, int width, int start_y, int start_x) :
+ProgressBar(height, width, start_y, start_x) {}
 
-void ProgressBar::verticleRefresh() {
+void VerticleProgressBar::refresh() {
   int top = (1 - progress) * (height - 2);
   for (int i = 1; i <  height - 1; i++) {
     wmove(win, i, 1);
     for (int j = 1; j < width - 1; j++) {
       if (i <= top)
-        waddch(win, emptyChar);
+        waddch(win, empty_char);
       else
-        waddch(win, fullChar);
+        waddch(win, full_char);
     }
   }
   wrefresh(win);
 }
 
-void ProgressBar::horizontalRefresh() {
+HorizontalProgressBar::HorizontalProgressBar(float progress, int height, int width, int start_y, int start_x) :
+ProgressBar(progress, height, width, start_y, start_x) {}
+
+HorizontalProgressBar::HorizontalProgressBar(int height, int width, int start_y, int start_x) :
+ProgressBar(height, width, start_y, start_x) {}
+
+void HorizontalProgressBar::refresh() {
   int top = progress * (width - 2);
   for (int i = 1; i <  width - 1; i++) {
     wmove(win, 1, i);
     for (int j = 1; j < height - 1; j++) {
       if (i <= top)
-        mvwaddch(win, j, i, fullChar);
+        mvwaddch(win, j, i, full_char);
       else
-        mvwaddch(win, j, i, emptyChar);
+        mvwaddch(win, j, i, empty_char);
     }
   }
   wrefresh(win);
