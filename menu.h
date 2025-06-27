@@ -45,6 +45,7 @@ public:
   MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text);
   MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text, bool is_text_centered);
   MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text, bool is_text_centered, bool is_boxed);
+  MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text, bool is_text_centered, bool is_boxed, int color);
 
   std::vector<std::string> get_text() const;
   bool get_is_boxed() const;
@@ -59,6 +60,7 @@ private:
   std::vector<std::string> text;
   bool is_boxed;
   bool is_text_centered;
+  int color;
 
   void refresh_centered();
   void refresh_not_centered();

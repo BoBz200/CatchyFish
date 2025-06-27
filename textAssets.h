@@ -49,3 +49,13 @@ std::vector<std::string> tutorial_text = {
 "  | || |_| | || (_) | |  | | (_| | |",
 "  |_| \\__,_|\\__\\___/|_|  |_|\\__,_|_|",
 };
+
+std::vector<std::string> navigation_tip_text = {
+  "(i)                                ",
+  "Ways to navigate menus:",
+  "[ Tab ]",
+  "arrow keys:",
+  " [ < v ^ > ] ",
+  "vim keys:",
+  " [ h j k l ] ",
+};

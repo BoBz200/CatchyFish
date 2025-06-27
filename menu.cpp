@@ -70,6 +70,7 @@ MenuItem(height, width, start_y, start_x) {
   this->text = text;
   is_boxed = false;
   is_text_centered = false;
+  color = 0;
 }
 
 MenuText::MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text, bool is_text_centered) :
@@ -80,6 +81,13 @@ MenuText(height, width, start_y, start_x, text) {
 MenuText::MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text, bool is_text_centered, bool is_boxed) :
 MenuText(height, width, start_y, start_x, text, is_text_centered) {
   this->is_boxed = is_boxed;
+}
+
+MenuText::MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text, bool is_text_centered,
+                   bool is_boxed, int color) :
+MenuText(height, width, start_y, start_x, text, is_text_centered, is_boxed) {
+  if (has_colors() == true)
+    this->color = color;
 }
 
 std::vector<std::string> MenuText::get_text() const {
@@ -106,8 +114,10 @@ void MenuText::set_is_text_centered(bool is_text_centered) {
 }
 
 void MenuText::refresh() {
-  if (is_boxed)
-    box(win, 0, 0);
+  if (is_boxed) {
+    wborder(win, ACS_VLINE | color, ACS_VLINE | color, ACS_HLINE | color, ACS_HLINE | color,
+            ACS_ULCORNER | color, ACS_URCORNER | color, ACS_LLCORNER | color, ACS_LRCORNER | color);
+  }
 
   if (is_text_centered)
     refresh_centered();
@@ -132,7 +142,7 @@ void MenuText::refresh_centered() {
         continue;
       }
 
-      waddch(win, ch);
+      waddch(win, ch | color);
     }
   }
 }
@@ -149,7 +159,7 @@ void MenuText::refresh_not_centered() {
         continue;
       }
 
-      waddch(win, ch);
+      waddch(win, ch | color);
     }
   }
 }

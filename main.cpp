@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include <vector>
+#include <iostream>
 
 #include "overlay.h"
 #include "menu.h"
@@ -9,8 +10,17 @@
 bool prepare_color();
 
 int main() {
-
   initscr();
+
+  int y, x;
+  getmaxyx(stdscr, y, x);
+
+  if (y < 45 || x < 170) {
+    endwin();
+    std::cout << "Your terminal is not big enough.\nPlease increase the window or reduce the text size." << std::endl;
+    return -1;
+  }
+
   prepare_color();
   keypad(stdscr, TRUE);
   curs_set(0);
@@ -23,9 +33,6 @@ int main() {
 
   printw("Gamestarted");
   refresh();
-
-  int y, x;
-  getmaxyx(stdscr, y, x);
 
   int button_width = 40;
   Menu* main_menu = new Menu(y, x, 0, 0,
@@ -46,7 +53,8 @@ int main() {
       new MenuText(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2), play_text, true),
       new MenuText(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2), tutorial_text, true),
       new MenuText(9, button_width, y / 9 * 7, (x / 2) - (button_width / 2), quit_text, true),
-      new MenuText(18, 105, 1, (x / 2) - (105 / 2), title_text2x, true),
+      new MenuText(18, 105, 1, (x / 2) - (105 / 2), title_text2x, true, false, COLOR_PAIR(3)),
+      new MenuText(10, 35, y / 9 * 7, (x / 13 * 10), navigation_tip_text, true, true, COLOR_PAIR(2)),
     })
   );
 
@@ -106,5 +114,7 @@ bool prepare_color() {
 
   start_color();
   init_pair(1, COLOR_BLACK, COLOR_WHITE);
+  init_pair(2, COLOR_GREEN, COLOR_BLACK);
+  init_pair(3, COLOR_BLUE, COLOR_BLACK);
   return true;
 }
