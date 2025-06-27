@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-#include "overlay.h"
+// #include "overlay.h"
 #include "menu.h"
 #include "globalState.h"
 #include "textAssets.h"
@@ -23,6 +23,7 @@ int main() {
 
   prepare_color();
   keypad(stdscr, TRUE);
+  mousemask(BUTTON1_CLICKED, NULL);
   curs_set(0);
   noecho();
 
@@ -73,6 +74,7 @@ int main() {
           program_state.menu->refresh();
       }
       if (program_state.current_state != MainMenu) {
+          mousemask(0, NULL);
           program_state.menu->clear_menu();
           program_state.menu = NULL;
         }

@@ -65,6 +65,12 @@ void MenuButton::action(GameState& state) {
   f(state);
 }
 
+bool MenuButton::is_mouse_in_button(MEVENT& event) {
+  if (event.x >= start_x && event.x < start_x + width && event.y >= start_y && event.y < start_y + height)
+    return true;
+  return false;
+}
+
 MenuText::MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text) :
 MenuItem(height, width, start_y, start_x) {
   this->text = text;
@@ -239,7 +245,21 @@ void Menu::clear_menu() {
 
 bool Menu::handle_input(int ch, GameState& state) {
 
-  if (selected_button_index != -1 && (ch == 'j' || ch == KEY_DOWN || ch == '\t')) {
+  if (ch == KEY_MOUSE) {
+    MEVENT event;
+    if (getmouse(&event) == OK && event.bstate & BUTTON1_CLICKED) {
+      for (MenuButton* menu_button : *menu_buttons) {
+        if (menu_button->is_mouse_in_button(event)) {
+          (*menu_buttons)[selected_button_index]->set_is_selected(false);
+          menu_button->set_is_selected(true);
+          this->refresh();
+          menu_button->action(state);
+          return true;
+        }
+      }
+    }
+  }
+  else if (selected_button_index != -1 && (ch == 'j' || ch == KEY_DOWN || ch == '\t')) {
     (*menu_buttons)[selected_button_index]->set_is_selected(false);
     selected_button_index = ++selected_button_index % menu_buttons->size();
     (*menu_buttons)[selected_button_index]->set_is_selected(true);

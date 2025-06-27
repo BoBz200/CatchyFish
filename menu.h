@@ -34,6 +34,8 @@ public:
   void refresh() override;
   void action(GameState& state);
 
+  bool is_mouse_in_button(MEVENT& event);
+
 private:
   char key;
   bool is_selected;
