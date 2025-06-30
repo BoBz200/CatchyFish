@@ -53,9 +53,10 @@ std::vector<std::string> tutorial_text = {
 std::vector<std::string> navigation_tip_text = {
   "(i)                                ",
   "Ways to navigate menus:",
+  "[ Mouse ]",
   "[ Tab ]",
   "arrow keys:",
-  " [ < v ^ > ] ",
+  " [ v ^ ] ",
   "vim keys:",
-  " [ h j k l ] ",
+  " [ j k ] ",
 };

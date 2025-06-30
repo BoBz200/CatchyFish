@@ -5,6 +5,7 @@
 // #include "overlay.h"
 #include "menu.h"
 #include "globalState.h"
+#include "overlay.h"
 #include "textAssets.h"
 
 bool prepare_color();
@@ -35,12 +36,16 @@ int main() {
   printw("Gamestarted");
   refresh();
 
+  VerticleProgressBar* bar = new VerticleProgressBar(27, 5, (y / 2) - (27 / 2), x / 13 * 11);
+
   int button_width = 40;
   Menu* main_menu = new Menu(y, x, 0, 0,
     new std::vector<MenuButton*>({
       new MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2),
         [&](GameState& state) {
           state.current_state = Game;
+          state.overlay = bar;
+          halfdelay(1);
         }, 'p'),
       new MenuButton(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2),
         [&](GameState& state) {
@@ -55,7 +60,7 @@ int main() {
       new MenuText(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2), tutorial_text, true),
       new MenuText(9, button_width, y / 9 * 7, (x / 2) - (button_width / 2), quit_text, true),
       new MenuText(18, 105, 1, (x / 2) - (105 / 2), title_text2x, true, false, COLOR_PAIR(3)),
-      new MenuText(10, 35, y / 9 * 7, (x / 13 * 10), navigation_tip_text, true, true, COLOR_PAIR(2)),
+      new MenuText(11, 35, y / 9 * 7, (x / 13 * 10), navigation_tip_text, true, true, COLOR_PAIR(2)),
     })
   );
 
@@ -77,23 +82,39 @@ int main() {
           mousemask(0, NULL);
           program_state.menu->clear_menu();
           program_state.menu = NULL;
-        }
+      }
       break;
 
-    case Game:
-      halfdelay(1);
+    case Game: {
       ch = getch();
       if (ch == 'q') {
           program_state.current_state = Quit;
+          program_state.overlay = NULL;
+      }
+      if (program_state.overlay != NULL) {
+          program_state.overlay->refresh();
+      }
+      float fishing_power = 0.03;
+      float dropping_power = 0.01;
+      if (ch == 'b') {
+        bar->set_progress(bar->get_progress() + fishing_power);
+      }
+      else if (ch == ERR) {
+        bar->set_progress(bar->get_progress() - dropping_power);
+      }
+
+      refresh();
+
+      if (program_state.current_state != Game) {
           nocbreak();
           cbreak();
       }
-      printw("Gaming ");
-      refresh();
       break;
+    }
 
     case Quit:
       delete main_menu;
+      delete bar;
       refresh();
       loop = false;
       break;
