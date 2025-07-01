@@ -5,12 +5,10 @@
 class Overlay {
 public:
   Overlay(int height, int width, int start_y, int start_x);
-  virtual ~Overlay();
 
-  virtual void refresh() = 0;
+  virtual void draw() = 0;
 
 protected:
-  WINDOW* win;
   int height;
   int width;
   int start_y;
@@ -26,7 +24,7 @@ public:
   float get_progress() const;
   void set_progress(float progress);
 
-  virtual void refresh() = 0;
+  virtual void draw() = 0;
 
 protected:
   float progress;
@@ -39,7 +37,7 @@ public:
   VerticleProgressBar(float progress, int height, int width, int start_y, int start_x);
   VerticleProgressBar(int height, int width, int start_y, int start_x);
 
-  void refresh() override;
+  void draw() override;
 };
 
 class HorizontalProgressBar: public ProgressBar {
@@ -47,5 +45,5 @@ public:
   HorizontalProgressBar(float progress, int height, int width, int start_y, int start_x);
   HorizontalProgressBar(int height, int width, int start_y, int start_x);
 
-  void refresh() override;
+  void draw() override;
 };

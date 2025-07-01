@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include "overlay.h"
+#include "myNcursesUtils.h"
 
 
 Overlay::Overlay(int height, int width, int start_y, int start_x) {
@@ -7,17 +8,11 @@ Overlay::Overlay(int height, int width, int start_y, int start_x) {
   this->width = width;
   this->start_y = start_y;
   this->start_x = start_x;
-  win = newwin(height, width, start_y, start_x);
 }
-
-Overlay::~Overlay() {
-  delwin(win);
-}
-
 
 ProgressBar::ProgressBar(float progress, int height, int width, int start_y, int start_x) :
 ProgressBar(height, width, start_y, start_x) {
-  this->progress = progress;
+  set_progress(progress);
 }
 
 ProgressBar::ProgressBar(int height, int width, int start_y, int start_x) :
@@ -26,6 +21,7 @@ Overlay(height, width, start_y, start_x) {
   if (has_colors() == false) {
     empty_char = ' ';
     full_char = '#';
+    printw("no color");
   }
   else {
     empty_char = ' ';
@@ -54,19 +50,20 @@ ProgressBar(progress, height, width, start_y, start_x) {}
 VerticleProgressBar::VerticleProgressBar(int height, int width, int start_y, int start_x) :
 ProgressBar(height, width, start_y, start_x) {}
 
-void VerticleProgressBar::refresh() {
-  box(win, 0, 0);
+void VerticleProgressBar::draw() {
+  draw_rectangle(height, width, start_y, start_x);
+
   int top = (1 - progress) * (height - 2);
   for (int i = 1; i <  height - 1; i++) {
-    wmove(win, i, 1);
+    move(i + start_y, start_x + 1);
+
     for (int j = 1; j < width - 1; j++) {
       if (i <= top)
-        waddch(win, empty_char);
+        addch(empty_char);
       else
-        waddch(win, full_char);
+        addch(full_char);
     }
   }
-  wrefresh(win);
 }
 
 HorizontalProgressBar::HorizontalProgressBar(float progress, int height, int width, int start_y, int start_x) :
@@ -75,17 +72,16 @@ ProgressBar(progress, height, width, start_y, start_x) {}
 HorizontalProgressBar::HorizontalProgressBar(int height, int width, int start_y, int start_x) :
 ProgressBar(height, width, start_y, start_x) {}
 
-void HorizontalProgressBar::refresh() {
-  box(win, 0, 0);
+void HorizontalProgressBar::draw() {
+  draw_rectangle(height, width, start_y, start_x);
   int top = progress * (width - 2);
   for (int i = 1; i <  width - 1; i++) {
-    wmove(win, 1, i);
+    move(start_y + 1, start_x + i);
     for (int j = 1; j < height - 1; j++) {
       if (i <= top)
-        mvwaddch(win, j, i, full_char);
+        mvaddch(start_y + j, start_x + i, full_char);
       else
-        mvwaddch(win, j, i, empty_char);
+        mvaddch(start_y + j, start_x + i, empty_char);
     }
   }
-  wrefresh(win);
 }
