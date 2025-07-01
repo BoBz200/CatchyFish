@@ -5,17 +5,17 @@
 #include <vector>
 #include <functional>
 #include "globalState.h"
+#include "myNcursesUtils.h"
 
 class MenuItem {
 public:
   MenuItem(int height, int width, int start_y, int start_x);
   virtual ~MenuItem();
 
-  virtual void refresh() = 0;
-  virtual void clear_menu_item();
+  virtual void draw() = 0;
+  virtual void clear();
 
 protected:
-  WINDOW* win;
   int height;
   int width;
   int start_y;
@@ -31,10 +31,10 @@ public:
   bool get_is_selected() const;
   void set_is_selected(bool is_selected);
 
-  void refresh() override;
+  void draw() override;
   void action(GameState& state);
 
-  bool is_mouse_in_button(MEVENT& event);
+  bool is_mouse_on_button(MEVENT& event);
 
 private:
   char key;
@@ -56,7 +56,7 @@ public:
   void set_is_boxed(bool is_boxed);
   void set_is_text_centered(bool is_text_centered);
 
-  void refresh() override;
+  void draw() override;
 
 private:
   std::vector<std::string> text;

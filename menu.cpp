@@ -65,7 +65,7 @@ void MenuButton::action(GameState& state) {
   f(state);
 }
 
-bool MenuButton::is_mouse_in_button(MEVENT& event) {
+bool MenuButton::is_mouse_on_button(MEVENT& event) {
   if (event.x >= start_x && event.x < start_x + width && event.y >= start_y && event.y < start_y + height)
     return true;
   return false;
