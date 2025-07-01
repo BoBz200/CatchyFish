@@ -1,8 +1,12 @@
+#include <cstdio>
+#include <functional>
 #include <ncurses.h>
+#include <random>
+#include <ctime>
 #include <vector>
 #include <iostream>
 
-// #include "overlay.h"
+#include "overlay.h"
 #include "menu.h"
 #include "globalState.h"
 #include "overlay.h"
@@ -27,13 +31,13 @@ int main() {
   mousemask(BUTTON1_CLICKED, NULL);
   curs_set(0);
   noecho();
+  set_escdelay(0);
 
   GameState program_state;
   program_state.current_state = MainMenu;
   program_state.overlay = NULL;
   program_state.menu = NULL;
 
-  printw("Gamestarted");
   refresh();
 
   VerticleProgressBar* bar = new VerticleProgressBar(27, 5, (y / 2) - (27 / 2), x / 13 * 11);
@@ -44,7 +48,6 @@ int main() {
       new MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2),
         [&](GameState& state) {
           state.current_state = Game;
-          state.overlay = bar;
           halfdelay(1);
         }, 'p'),
       new MenuButton(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2),
@@ -64,9 +67,31 @@ int main() {
     })
   );
 
+  Menu* pause_menu = new Menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
+    new std::vector<MenuButton*>({
+      new MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2),
+        [&](GameState& state) {
+          state.current_state = Game;
+        }, 'r'),
+      new MenuButton(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2),
+        [&](GameState& state) {
+          state.current_state = Quit;
+        }, 'q'),
+    }),
+    new std::vector<MenuText*>({
+      new MenuText(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2), resume_text, true),
+      new MenuText(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2), quit_text, true),
+    })
+  );
+
+  pause_menu->set_is_boxed(true);
+
   program_state.menu = main_menu;
   program_state.menu->refresh();
   program_state.menu->refresh();
+
+  char alternating_game_key = ' ';
+  time_t fish_encounter_time = -1;
 
   int ch;
   bool loop = true;
@@ -87,23 +112,54 @@ int main() {
 
     case Game: {
       ch = getch();
-      if (ch == 'q') {
-          program_state.current_state = Quit;
-          program_state.overlay = NULL;
+      if (ch == 27) {
+        program_state.current_state = Paused;
+        program_state.menu = pause_menu;
+        mousemask(BUTTON1_CLICKED, NULL);
+        program_state.menu->refresh();
+        program_state.menu->refresh();
+        nocbreak();
+        cbreak();
+        break;
       }
       if (program_state.overlay != NULL) {
           program_state.overlay->refresh();
       }
-      float fishing_power = 0.03;
-      float dropping_power = 0.01;
-      if (ch == 'b') {
-        bar->set_progress(bar->get_progress() + fishing_power);
+
+      if (fish_encounter_time == -1) {
+        fish_encounter_time = time(NULL) + (int)(rand() % 30);
+        printw("waiting");
+        refresh();
       }
-      else if (ch == ERR) {
-        bar->set_progress(bar->get_progress() - dropping_power);
+      else if (fish_encounter_time == 0) {
+        float fishing_power = 0.03;
+        float dropping_power = 0.005;
+        if (ch == 'b' && alternating_game_key != 'b') {
+          bar->set_progress(bar->get_progress() + fishing_power);
+          alternating_game_key = 'b';
+        }
+        else if (ch == 'v' && alternating_game_key != 'v') {
+          bar->set_progress(bar->get_progress() + fishing_power);
+          alternating_game_key = 'v';
+        }
+        else if (ch == ERR) {
+          bar->set_progress(bar->get_progress() - dropping_power);
+        }
+
+        if (bar->get_progress() >= 1) {
+          printw("you did it");
+          program_state.overlay = NULL;
+          fish_encounter_time = -1;
+        }
+        refresh();
+      }
+      else if (fish_encounter_time <= time(NULL)) {
+        fish_encounter_time = 0; 
+        program_state.overlay = bar;
+        printw("catch the fish");
+        refresh();
       }
 
-      refresh();
 
       if (program_state.current_state != Game) {
           nocbreak();
@@ -112,8 +168,25 @@ int main() {
       break;
     }
 
+    case Paused:
+      ch = getch();
+      if (program_state.menu->handle_input(ch, program_state)) {
+          program_state.menu->refresh();
+      }
+      if (ch == 27) {
+        program_state.current_state = Game;
+      }
+      if (program_state.current_state != Paused) {
+          mousemask(0, NULL);
+          program_state.menu->clear_menu();
+          program_state.menu = NULL;
+          halfdelay(1);
+      }
+      break;
+
     case Quit:
       delete main_menu;
+      delete pause_menu;
       delete bar;
       refresh();
       loop = false;
@@ -124,7 +197,6 @@ int main() {
     }
   }
 
-  getch();
 
   endwin();
 

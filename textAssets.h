@@ -2,7 +2,6 @@
 #include <string>
 
 std::vector<std::string> quit_text = {
-  "",
   "  ___        _ _   ",
   " / _ \\ _   _(_) |_ ",
   "| | | | | | | | __|",
@@ -59,4 +58,12 @@ std::vector<std::string> navigation_tip_text = {
   " [ v ^ ] ",
   "vim keys:",
   " [ j k ] ",
+};
+
+std::vector<std::string> resume_text = {
+" ____                               ",
+"|  _ \\ ___  ___ _   _ _ __ ___   ___",
+"| |_) / _ \\/ __| | | | '_ ` _ \\ / _ \\",
+"|  _ <  __/\\__ \\ |_| | | | | | |  __/",
+"|_| \\_\\___||___/\\__,_|_| |_| |_|\\___|",
 };

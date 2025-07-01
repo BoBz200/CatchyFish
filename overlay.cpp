@@ -23,7 +23,6 @@ ProgressBar(height, width, start_y, start_x) {
 ProgressBar::ProgressBar(int height, int width, int start_y, int start_x) :
 Overlay(height, width, start_y, start_x) {
   progress = 0;
-  box(win, 0, 0);
   if (has_colors() == false) {
     empty_char = ' ';
     full_char = '#';
@@ -56,6 +55,7 @@ VerticleProgressBar::VerticleProgressBar(int height, int width, int start_y, int
 ProgressBar(height, width, start_y, start_x) {}
 
 void VerticleProgressBar::refresh() {
+  box(win, 0, 0);
   int top = (1 - progress) * (height - 2);
   for (int i = 1; i <  height - 1; i++) {
     wmove(win, i, 1);
@@ -76,6 +76,7 @@ HorizontalProgressBar::HorizontalProgressBar(int height, int width, int start_y,
 ProgressBar(height, width, start_y, start_x) {}
 
 void HorizontalProgressBar::refresh() {
+  box(win, 0, 0);
   int top = progress * (width - 2);
   for (int i = 1; i <  width - 1; i++) {
     wmove(win, 1, i);
