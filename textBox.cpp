@@ -54,6 +54,10 @@ void TextBox::draw() {
   }
 }
 
+void TextBox::clear() {
+  clear_rectangle(height, width, start_y, start_x);
+}
+
 TextBoxCentered::TextBoxCentered(std::vector<std::string> text, int height, int width, int start_y, int start_x) :
 TextBox(text, height, width, start_y, start_x) {}
 

@@ -13,6 +13,7 @@ public:
   bool get_is_boxed() const;
 
   virtual void draw();
+  virtual void clear();
 
 protected:
   int height;

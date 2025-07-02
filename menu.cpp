@@ -1,37 +1,25 @@
 #include <functional>
 #include <ncurses.h>
-#include <string>
 #include <vector>
 #include "menu.h"
 #include "globalState.h"
+#include "myNcursesUtils.h"
+#include "textBox.h"
 
-MenuItem::MenuItem(int height, int width, int start_y, int start_x) {
+MenuButton::MenuButton(int height, int width, int start_y, int start_x, std::function<void(GameState&)> f) {
   this->height = height;
   this->width = width;
   this->start_y = start_y;
   this->start_x = start_x;
-  win = newwin(height, width, start_y, start_x);
-}
 
-MenuItem::~MenuItem() {
-  delwin(win);
-}
-
-MenuButton::MenuButton(int height, int width, int start_y, int start_x, std::function<void(GameState&)> f) :
-MenuItem(height, width, start_y, start_x){
+  this->f = f;
   key = 0;
   is_selected = false;
-  this->f = f;
 }
 
 MenuButton::MenuButton(int height, int width, int start_y, int start_x, std::function<void(GameState&)> f, char key) :
 MenuButton(height, width, start_y, start_x, f){
   this->key = key;
-}
-
-void MenuItem::clear_menu_item() {
-  wclear(win);
-  wrefresh(win);
 }
 
 int MenuButton::get_key() const {
@@ -42,23 +30,16 @@ bool MenuButton::get_is_selected() const {
 }
 
 void MenuButton::set_is_selected(bool is_selected) {
-  if (this->is_selected == is_selected)
-    return;
-
-  if (is_selected) {
-    delwin(win);
-    win = newwin(height + 2, width + 2, start_y - 1, start_x - 1);
-  }
-  else {
-    delwin(win);
-    win = newwin(height, width, start_y, start_x);
-  }
   this->is_selected = is_selected;
 }
 
-void MenuButton::refresh() {
-  box(win, 0, 0);
-  wrefresh(win);
+void MenuButton::draw() {
+  int increase = is_selected ? 1 : 0;
+  draw_rectangle(height + (increase * 2), width + (increase * 2), start_y - increase, start_x - increase);
+}
+
+void MenuButton::clear() {
+  clear_rectangle(height, width, start_y, start_x);
 }
 
 void MenuButton::action(GameState& state) {
@@ -71,112 +52,11 @@ bool MenuButton::is_mouse_on_button(MEVENT& event) {
   return false;
 }
 
-MenuText::MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text) :
-MenuItem(height, width, start_y, start_x) {
-  this->text = text;
-  is_boxed = false;
-  is_text_centered = false;
-  color = 0;
-}
-
-MenuText::MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text, bool is_text_centered) :
-MenuText(height, width, start_y, start_x, text) {
-  this->is_text_centered = is_text_centered;
-}
-
-MenuText::MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text, bool is_text_centered, bool is_boxed) :
-MenuText(height, width, start_y, start_x, text, is_text_centered) {
-  this->is_boxed = is_boxed;
-}
-
-MenuText::MenuText(int height, int width, int start_y, int start_x, std::vector<std::string> text, bool is_text_centered,
-                   bool is_boxed, int color) :
-MenuText(height, width, start_y, start_x, text, is_text_centered, is_boxed) {
-  if (has_colors() == true)
-    this->color = color;
-}
-
-std::vector<std::string> MenuText::get_text() const {
-  return text;
-}
-bool MenuText::get_is_boxed() const {
-  return is_boxed;
-}
-
-bool MenuText::get_is_text_centered() const {
-  return is_text_centered;
-}
-
-void MenuText::set_text(std::vector<std::string>& text) {
-  this->text = text;
-}
-
-void MenuText::set_is_boxed(bool is_boxed) {
-  this->is_boxed = is_boxed;
-}
-
-void MenuText::set_is_text_centered(bool is_text_centered) {
-  this->is_text_centered = is_text_centered;
-}
-
-void MenuText::refresh() {
-  if (is_boxed) {
-    wborder(win, ACS_VLINE | color, ACS_VLINE | color, ACS_HLINE | color, ACS_HLINE | color,
-            ACS_ULCORNER | color, ACS_URCORNER | color, ACS_LLCORNER | color, ACS_LRCORNER | color);
-  }
-
-  if (is_text_centered)
-    refresh_centered();
-  else
-    refresh_not_centered();
-
-  wrefresh(win);
-}
-
-void MenuText::refresh_centered() {
-  for (int i = 0; (i < height - 2 && i < text.size()); i++) {
-    std::string line = text[i];
-
-    int start = ((width - 2) / 2) - (line.size() / 2);
-    start = start < 0 ? 0 : start;
-    wmove(win, i + 1, start + 1);
-
-    for (int j = 0; (j < width - 2 && j < line.size()); j++) {
-      char ch = line[j];
-      if (ch == ' ') {
-        wmove(win, i + 1, j + 2 + start);
-        continue;
-      }
-
-      waddch(win, ch | color);
-    }
-  }
-}
-
-void MenuText::refresh_not_centered() {
-  for (int i = 0; (i < height - 2 && i < text.size()); i++) {
-    std::string line = text[i];
-    wmove(win, i + 1, 1);
-
-    for (int j = 0; (j < width - 2 && j < line.size()); j++) {
-      char ch = line[j];
-      if (ch == ' ') {
-        wmove(win, i + 1, j + 2);
-        continue;
-      }
-
-      waddch(win, ch | color);
-    }
-  }
-}
-
-
-  Menu::Menu(int height, int width, int start_y, int start_x, std::vector<MenuButton*>* menu_buttons, std::vector<MenuText*>* menu_texts) {
+  Menu::Menu(int height, int width, int start_y, int start_x, std::vector<MenuButton*>* menu_buttons, std::vector<TextBox*>* menu_texts) {
   this->height = height;
   this->width = width;
   this->start_y = start_y;
   this->start_x = start_x;
-  win = newwin(height, width, start_y, start_x);
 
   is_boxed = false;
 
@@ -193,10 +73,8 @@ void MenuText::refresh_not_centered() {
 }
 
 Menu::~Menu() {
-  wclear(win);
-  delwin(win);
 
-  for (MenuText* menu_text : *menu_texts) {
+  for (TextBox* menu_text : *menu_texts) {
     delete menu_text;
   }
   delete menu_texts;
@@ -214,33 +92,29 @@ void Menu::set_is_boxed(bool is_boxed) {
   this->is_boxed = is_boxed;
 }
 
-void Menu::refresh() {
-  wclear(win);
+void Menu::draw() {
   if (is_boxed)
-    box(win, 0, 0);
-  wrefresh(win);
+    draw_rectangle(height, width, start_y, start_x);
 
   for (MenuButton* menu_button : *menu_buttons) {
-    menu_button->refresh();
+    menu_button->draw();
   }
 
-  for (MenuText* menu_text : *menu_texts) {
-    menu_text->refresh();
+  for (TextBox* menu_text : *menu_texts) {
+    menu_text->draw();
   }
 
 }
 
-void Menu::clear_menu() {
-  wclear(win);
+void Menu::clear() {
+  clear_rectangle(height, width, start_y, start_x);
 
   for (MenuButton* menu_button : *menu_buttons) {
-    menu_button->clear_menu_item();
+    menu_button->clear();
   }
-  for (MenuText* menu_text : *menu_texts) {
-    menu_text->clear_menu_item();
+  for (TextBox* menu_text : *menu_texts) {
+    menu_text->clear();
   }
-
-  wrefresh(win);
 }
 
 bool Menu::handle_input(int ch, GameState& state) {
@@ -249,10 +123,10 @@ bool Menu::handle_input(int ch, GameState& state) {
     MEVENT event;
     if (getmouse(&event) == OK && event.bstate & BUTTON1_CLICKED) {
       for (MenuButton* menu_button : *menu_buttons) {
-        if (menu_button->is_mouse_in_button(event)) {
+        if (menu_button->is_mouse_on_button(event)) {
           (*menu_buttons)[selected_button_index]->set_is_selected(false);
           menu_button->set_is_selected(true);
-          this->refresh();
+          this->draw();
           menu_button->action(state);
           return true;
         }
