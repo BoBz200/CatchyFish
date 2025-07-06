@@ -137,12 +137,14 @@ bool Menu::handle_input(int ch, GameState& state) {
     (*menu_buttons)[selected_button_index]->set_is_selected(false);
     selected_button_index = ++selected_button_index % menu_buttons->size();
     (*menu_buttons)[selected_button_index]->set_is_selected(true);
+    clear();
     return true;
   }
   else if (selected_button_index != -1 && (ch == 'k' || ch == KEY_UP)) {
     (*menu_buttons)[selected_button_index]->set_is_selected(false);
     selected_button_index = (menu_buttons->size() - 1 + selected_button_index) % menu_buttons->size();
     (*menu_buttons)[selected_button_index]->set_is_selected(true);
+    clear();
     return true;
   }
   else if (selected_button_index != -1 && ch == '\n') {

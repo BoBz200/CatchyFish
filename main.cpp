@@ -8,6 +8,7 @@
 
 #include "overlay.h"
 #include "menu.h"
+#include "textBox.h"
 #include "globalState.h"
 #include "overlay.h"
 #include "textAssets.h"
@@ -16,6 +17,7 @@ bool prepare_color();
 
 int main() {
   initscr();
+  srand(time(NULL));
 
   int y, x;
   getmaxyx(stdscr, y, x);
@@ -35,6 +37,7 @@ int main() {
 
   GameState program_state;
   program_state.current_state = MainMenu;
+  program_state.previous_state = MainMenu;
   program_state.overlay = NULL;
   program_state.menu = NULL;
 
@@ -47,8 +50,7 @@ int main() {
     new std::vector<MenuButton*>({
       new MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2),
         [&](GameState& state) {
-          state.current_state = Game;
-          halfdelay(1);
+          state.current_state = Waiting;
         }, 'p'),
       new MenuButton(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2),
         [&](GameState& state) {
@@ -58,12 +60,12 @@ int main() {
           state.current_state = Quit;
         }, 'q'),
     }),
-    new std::vector<MenuText*>({
-      new MenuText(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2), play_text, true),
-      new MenuText(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2), tutorial_text, true),
-      new MenuText(9, button_width, y / 9 * 7, (x / 2) - (button_width / 2), quit_text, true),
-      new MenuText(18, 105, 1, (x / 2) - (105 / 2), title_text2x, true, false, COLOR_PAIR(3)),
-      new MenuText(11, 35, y / 9 * 7, (x / 13 * 10), navigation_tip_text, true, true, COLOR_PAIR(2)),
+    new std::vector<TextBox*>({
+      new TextBoxCentered(play_text, 9, button_width, y / 9 * 3 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(tutorial_text, 9, button_width, y / 9 * 5 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(quit_text, 9, button_width, y / 9 * 7 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(title_text2x, 18, 105, 1, (x / 2) - (105 / 2), false, COLOR_PAIR(3)),
+      new TextBoxCentered(navigation_tip_text, 11, 35, y / 9 * 7, (x / 13 * 10), true, COLOR_PAIR(2)),
     })
   );
 
@@ -71,27 +73,29 @@ int main() {
     new std::vector<MenuButton*>({
       new MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2),
         [&](GameState& state) {
-          state.current_state = Game;
+          state.current_state = state.previous_state;
         }, 'r'),
       new MenuButton(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2),
         [&](GameState& state) {
           state.current_state = Quit;
         }, 'q'),
     }),
-    new std::vector<MenuText*>({
-      new MenuText(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2), resume_text, true),
-      new MenuText(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2), quit_text, true),
+    new std::vector<TextBox*>({
+      new TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(quit_text, 8, button_width, y / 6 * 4 - 1 + 1, (x / 2) - (button_width / 2)),
     })
   );
 
   pause_menu->set_is_boxed(true);
 
   program_state.menu = main_menu;
-  program_state.menu->refresh();
-  program_state.menu->refresh();
+  program_state.menu->draw();
+  refresh();
 
   char alternating_game_key = ' ';
   time_t fish_encounter_time = -1;
+  float fishing_power = 0.03;
+  float dropping_power = 0.005;
 
   int ch;
   bool loop = true;
@@ -101,86 +105,101 @@ int main() {
     case MainMenu:
       ch = getch();
       if (program_state.menu->handle_input(ch, program_state)) {
-          program_state.menu->refresh();
+          program_state.menu->draw();
       }
       if (program_state.current_state != MainMenu) {
           mousemask(0, NULL);
-          program_state.menu->clear_menu();
+          program_state.menu->clear();
           program_state.menu = NULL;
+
+          if (program_state.current_state == Waiting) {
+            fish_encounter_time = time(NULL) + (int)(rand() % 30);
+            mvprintw(0, 0, "waiting");
+            halfdelay(1);
+          }
       }
       break;
 
-    case Game: {
+    case Waiting:
       ch = getch();
       if (ch == 27) {
         program_state.current_state = Paused;
+        program_state.previous_state = Waiting;
         program_state.menu = pause_menu;
         mousemask(BUTTON1_CLICKED, NULL);
-        program_state.menu->refresh();
-        program_state.menu->refresh();
+        program_state.menu->clear();
+        program_state.menu->draw();
         nocbreak();
         cbreak();
         break;
       }
-      if (program_state.overlay != NULL) {
-          program_state.overlay->refresh();
-      }
 
-      if (fish_encounter_time == -1) {
-        fish_encounter_time = time(NULL) + (int)(rand() % 30);
-        printw("waiting");
-        refresh();
-      }
-      else if (fish_encounter_time == 0) {
-        float fishing_power = 0.03;
-        float dropping_power = 0.005;
-        if (ch == 'b' && alternating_game_key != 'b') {
-          bar->set_progress(bar->get_progress() + fishing_power);
-          alternating_game_key = 'b';
-        }
-        else if (ch == 'v' && alternating_game_key != 'v') {
-          bar->set_progress(bar->get_progress() + fishing_power);
-          alternating_game_key = 'v';
-        }
-        else if (ch == ERR) {
-          bar->set_progress(bar->get_progress() - dropping_power);
-        }
-
-        if (bar->get_progress() >= 1) {
-          printw("you did it");
-          program_state.overlay = NULL;
-          fish_encounter_time = -1;
-        }
-        refresh();
-      }
-      else if (fish_encounter_time <= time(NULL)) {
-        fish_encounter_time = 0; 
+      if (fish_encounter_time <= time(NULL)) {
+        fish_encounter_time = -1; 
         program_state.overlay = bar;
-        printw("catch the fish");
-        refresh();
-      }
-
-
-      if (program_state.current_state != Game) {
-          nocbreak();
-          cbreak();
+        bar->set_progress(0);
+        program_state.current_state = Catching;
+        program_state.previous_state = Waiting;
+        mvprintw(0, 0, "catch the fish");
       }
       break;
-    }
+
+    case Catching:
+      ch = getch();
+      if (ch == 27) {
+        program_state.current_state = Paused;
+        program_state.previous_state = Catching;
+        program_state.menu = pause_menu;
+        mousemask(BUTTON1_CLICKED, NULL);
+        program_state.menu->clear();
+        program_state.menu->draw();
+        nocbreak();
+        cbreak();
+        break;
+      }
+
+      if (program_state.overlay != NULL) {
+          program_state.overlay->draw();
+      }
+
+      if (ch == 'b' && alternating_game_key != 'b') {
+        bar->set_progress(bar->get_progress() + fishing_power);
+        alternating_game_key = 'b';
+      }
+      else if (ch == 'v' && alternating_game_key != 'v') {
+        bar->set_progress(bar->get_progress() + fishing_power);
+        alternating_game_key = 'v';
+      }
+      else if (ch == ERR) {
+        bar->set_progress(bar->get_progress() - dropping_power);
+      }
+
+      if (bar->get_progress() >= 1) {
+        mvprintw(0, 0, "you did it");
+        clear();
+        program_state.overlay = NULL;
+        program_state.current_state = Waiting;
+        program_state.previous_state = Catching;
+        fish_encounter_time = time(NULL) + (int)(rand() % 30);
+        mvprintw(0, 0, "waiting");
+      }
+      break;
 
     case Paused:
       ch = getch();
       if (program_state.menu->handle_input(ch, program_state)) {
-          program_state.menu->refresh();
+          program_state.menu->draw();
       }
       if (ch == 27) {
-        program_state.current_state = Game;
+        program_state.current_state = program_state.previous_state;
       }
       if (program_state.current_state != Paused) {
+          if (program_state.current_state == Waiting || program_state.current_state == Catching)
+            halfdelay(1);
           mousemask(0, NULL);
-          program_state.menu->clear_menu();
+          program_state.previous_state = Paused;
+          program_state.menu->clear();
           program_state.menu = NULL;
-          halfdelay(1);
       }
       break;
 
@@ -188,13 +207,14 @@ int main() {
       delete main_menu;
       delete pause_menu;
       delete bar;
-      refresh();
       loop = false;
       break;
 
     default:
       break;
     }
+
+    refresh();
   }
 
 

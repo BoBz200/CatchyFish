@@ -34,7 +34,7 @@ bool TextBox::get_is_boxed() const {
 void TextBox::draw() {
   int margin = 0;
   if (is_boxed) {
-    draw_rectangle(height, width, start_y, start_x);
+    draw_rectangle(height, width, start_y, start_x, color);
     margin = 1;
   }
 
@@ -70,7 +70,7 @@ TextBox(text, height, width, start_y, start_x, is_boxed, color) {}
 void TextBoxCentered::draw() {
   int margin = 0;
   if (is_boxed) {
-    draw_rectangle(height, width, start_y, start_x);
+    draw_rectangle(height, width, start_y, start_x, color);
     margin = 1;
   }
 

@@ -11,6 +11,17 @@ void draw_rectangle(int height, int width, int y, int x) {
     mvaddch(y + height - 1, x + width - 1, ACS_LRCORNER);
 }
 
+void draw_rectangle(int height, int width, int y, int x, int color) {
+    mvhline(y, x + 1, ACS_HLINE | color, width - 2);
+    mvhline(y + height - 1, x + 1, ACS_HLINE | color, width - 2);
+    mvvline(y + 1, x, ACS_VLINE | color, height - 2);
+    mvvline(y + 1, x + width - 1, ACS_VLINE | color, height - 2);
+    mvaddch(y, x, ACS_ULCORNER | color);
+    mvaddch(y + height - 1, x, ACS_LLCORNER | color);
+    mvaddch(y, x + width - 1, ACS_URCORNER | color);
+    mvaddch(y + height - 1, x + width - 1, ACS_LRCORNER | color);
+}
+
 void clear_rectangle(int height, int width, int y, int x) {
   for (int i = 0; i < height; i++) {
     move(y + i, x);
