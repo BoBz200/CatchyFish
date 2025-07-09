@@ -3,6 +3,7 @@
 #include <ncurses.h>
 #include <random>
 #include <ctime>
+#include <type_traits>
 #include <vector>
 #include <iostream>
 
@@ -92,10 +93,23 @@ int main() {
   program_state.menu->draw();
   refresh();
 
+  bool waiting_animation_switch = false;
+  bool can_switch = true;
+
   char alternating_game_key = ' ';
   time_t fish_encounter_time = -1;
   float fishing_power = 0.03;
   float dropping_power = 0.005;
+
+
+  TextBoxCentered b_pressed(b_button_pressed, 10, 15, y / 6 * 5, x / 2);
+  TextBoxCentered b(b_button, 10, 15, y / 6 * 5, x / 2);
+  TextBoxCentered v_pressed(v_button_pressed, 10, 15, y / 6 * 5, x / 2 - 15);
+  TextBoxCentered v(v_button, 10, 15, y / 6 * 5, x / 2 - 15);
+  TextBoxCentered fishing_bobber_waiting1(bobber1, 13, 28, y / 2 - 13 / 2, x / 2 - 28 / 2);
+  TextBoxCentered fishing_bobber_waiting2(bobber2, 13, 28, y / 2 - 13 / 2, x / 2 - 28 / 2);
+  TextBoxCentered fishing_bobber_catching(bobber3, 13, 28, y / 2 - 13 / 2, x / 2 - 28 / 2);
+  TextBoxCentered catching_fish_indicator(exclamation_mark, 10, 5, y / 4, x / 2 + 10, false, COLOR_PAIR(4));
 
   int ch;
   bool loop = true;
@@ -114,7 +128,6 @@ int main() {
 
           if (program_state.current_state == Waiting) {
             fish_encounter_time = time(NULL) + (int)(rand() % 30);
-            mvprintw(0, 0, "waiting");
             halfdelay(1);
           }
       }
@@ -134,13 +147,34 @@ int main() {
         break;
       }
 
+
+      if (time(NULL) % 3 == 0 && can_switch) {
+        waiting_animation_switch = !waiting_animation_switch;
+        can_switch = false;
+      }
+      if (!can_switch &&time(NULL) % 3 == 1)
+        can_switch = true;
+
+      if (waiting_animation_switch) {
+        fishing_bobber_waiting2.clear();
+        fishing_bobber_waiting1.draw();
+      }
+      else {
+        fishing_bobber_waiting1.clear();
+        fishing_bobber_waiting2.draw();
+      }
+
       if (fish_encounter_time <= time(NULL)) {
         fish_encounter_time = -1; 
         program_state.overlay = bar;
         bar->set_progress(0);
         program_state.current_state = Catching;
         program_state.previous_state = Waiting;
-        mvprintw(0, 0, "catch the fish");
+        fishing_bobber_waiting1.clear();
+        fishing_bobber_waiting2.clear();
+        fishing_bobber_catching.draw();
+        v.draw();
+        b.draw();
       }
       break;
 
@@ -158,10 +192,6 @@ int main() {
         break;
       }
 
-      if (program_state.overlay != NULL) {
-          program_state.overlay->draw();
-      }
-
       if (ch == 'b' && alternating_game_key != 'b') {
         bar->set_progress(bar->get_progress() + fishing_power);
         alternating_game_key = 'b';
@@ -174,6 +204,30 @@ int main() {
         bar->set_progress(bar->get_progress() - dropping_power);
       }
 
+      catching_fish_indicator.draw();
+      fishing_bobber_catching.draw();
+      if (program_state.overlay != NULL && bar->get_progress() > 0) {
+          program_state.overlay->draw();
+      }
+      if (alternating_game_key == 'b') {
+        b.clear();
+        v_pressed.clear();
+        v.draw();
+        b_pressed.draw();
+      }
+      else if (alternating_game_key == 'v') {
+        v.clear();
+        b_pressed.clear();
+        b.draw();
+        v_pressed.draw();
+      }
+      else {
+          v_pressed.clear();
+          b_pressed.clear();
+          v.draw();
+          b.draw();
+      }
+
       if (bar->get_progress() >= 1) {
         mvprintw(0, 0, "you did it");
         clear();
@@ -181,7 +235,10 @@ int main() {
         program_state.current_state = Waiting;
         program_state.previous_state = Catching;
         fish_encounter_time = time(NULL) + (int)(rand() % 30);
-        mvprintw(0, 0, "waiting");
+        alternating_game_key = ' ';
+        fishing_bobber_catching.clear();
+        fishing_bobber_waiting1.draw();
+        catching_fish_indicator.clear();
       }
       break;
 
@@ -231,5 +288,6 @@ bool prepare_color() {
   init_pair(1, COLOR_BLACK, COLOR_WHITE);
   init_pair(2, COLOR_GREEN, COLOR_BLACK);
   init_pair(3, COLOR_BLUE, COLOR_BLACK);
+  init_pair(4, COLOR_RED, COLOR_BLACK);
   return true;
 }
