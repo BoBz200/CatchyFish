@@ -5,12 +5,10 @@
 #include <vector>
 #include <iostream>
 
-#include "myNcursesUtils.h"
-#include "overlay.h"
+#include "bar.h"
 #include "menu.h"
 #include "textBox.h"
 #include "globalState.h"
-#include "overlay.h"
 #include "textAssets.h"
 
 bool prepare_color();
@@ -45,42 +43,42 @@ int main() {
 
   int button_width = 40;
   Menu main_menu(y, x, 0, 0,
-    new std::vector<MenuButton*>({
-      new MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2),
+    std::vector<MenuButton>({
+      MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2),
         [&](GameState& state) {
           state.current_state = Waiting;
         }, 'p'),
-      new MenuButton(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2),
+      MenuButton(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2),
         [&](GameState& state) {
         }, 't'),
-      new MenuButton(9, button_width, y / 9 * 7, (x / 2) - (button_width / 2),
+      MenuButton(9, button_width, y / 9 * 7, (x / 2) - (button_width / 2),
         [&](GameState& state) {
           state.current_state = Quit;
         }, 'q'),
     }),
-    new std::vector<TextBox*>({
-      new TextBoxCentered(play_text, 9, button_width, y / 9 * 3 + 1, (x / 2) - (button_width / 2)),
-      new TextBoxCentered(tutorial_text, 9, button_width, y / 9 * 5 + 1, (x / 2) - (button_width / 2)),
-      new TextBoxCentered(quit_text, 9, button_width, y / 9 * 7 + 1, (x / 2) - (button_width / 2)),
-      new TextBoxCentered(title_text2x, 18, 105, 1, (x / 2) - (105 / 2), false, COLOR_PAIR(3)),
-      new TextBoxCentered(navigation_tip_text, 11, 35, y / 9 * 7, (x / 13 * 10), true, COLOR_PAIR(2)),
+    std::vector<TextBox>({
+      TextBoxCentered(play_text, 9, button_width, y / 9 * 3 + 1, (x / 2) - (button_width / 2)),
+      TextBoxCentered(tutorial_text, 9, button_width, y / 9 * 5 + 1, (x / 2) - (button_width / 2)),
+      TextBoxCentered(quit_text, 9, button_width, y / 9 * 7 + 1, (x / 2) - (button_width / 2)),
+      TextBoxCentered(title_text2x, 18, 105, 1, (x / 2) - (105 / 2), false, COLOR_PAIR(3)),
+      TextBoxCentered(navigation_tip_text, 11, 35, y / 9 * 7, (x / 13 * 10), true, COLOR_PAIR(2)),
     })
   );
 
   Menu pause_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
-    new std::vector<MenuButton*>({
-      new MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2),
+    std::vector<MenuButton>({
+      MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2),
         [&](GameState& state) {
           state.current_state = state.previous_state;
         }, 'r'),
-      new MenuButton(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2),
+      MenuButton(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2),
         [&](GameState& state) {
           state.current_state = Quit;
         }, 'q'),
     }),
-    new std::vector<TextBox*>({
-      new TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
-      new TextBoxCentered(quit_text, 8, button_width, y / 6 * 4 - 1 + 1, (x / 2) - (button_width / 2)),
+    std::vector<TextBox>({
+      TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
+      TextBoxCentered(quit_text, 8, button_width, y / 6 * 4 - 1 + 1, (x / 2) - (button_width / 2)),
     })
   );
 

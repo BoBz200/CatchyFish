@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ncurses.h>
+
 #include "window.h"
 
 class ProgressBar: public Window {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "overlay.h"
-
 enum state {
   MainMenu,
   Waiting,
@@ -10,8 +8,6 @@ enum state {
   Paused,
   Quit,
 };
-
-class Menu;
 
 struct GameState {
   enum state current_state;

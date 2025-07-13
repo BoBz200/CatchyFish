@@ -1,3 +1,5 @@
+#pragma once
+
 class Window {
 public:
   Window(int height, int width, int start_y, int start_x, bool is_boxed);
