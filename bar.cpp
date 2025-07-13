@@ -1,14 +1,6 @@
 #include <ncurses.h>
-#include "overlay.h"
-#include "myNcursesUtils.h"
 
-
-Overlay::Overlay(int height, int width, int start_y, int start_x) {
-  this->height = height;
-  this->width = width;
-  this->start_y = start_y;
-  this->start_x = start_x;
-}
+#include "bar.h"
 
 ProgressBar::ProgressBar(float progress, int height, int width, int start_y, int start_x) :
 ProgressBar(height, width, start_y, start_x) {
@@ -16,8 +8,9 @@ ProgressBar(height, width, start_y, start_x) {
 }
 
 ProgressBar::ProgressBar(int height, int width, int start_y, int start_x) :
-Overlay(height, width, start_y, start_x) {
+Window(height, width, start_y, start_x) {
   progress = 0;
+
   if (has_colors() == false) {
     empty_char = ' ';
     full_char = '#';
@@ -51,7 +44,7 @@ VerticleProgressBar::VerticleProgressBar(int height, int width, int start_y, int
 ProgressBar(height, width, start_y, start_x) {}
 
 void VerticleProgressBar::draw() {
-  draw_rectangle(height, width, start_y, start_x);
+  box();
 
   int top = (1 - progress) * (height - 2);
   for (int i = 1; i <  height - 1; i++) {
@@ -73,7 +66,7 @@ HorizontalProgressBar::HorizontalProgressBar(int height, int width, int start_y,
 ProgressBar(height, width, start_y, start_x) {}
 
 void HorizontalProgressBar::draw() {
-  draw_rectangle(height, width, start_y, start_x);
+  box();
   int top = progress * (width - 2);
   for (int i = 1; i <  width - 1; i++) {
     move(start_y + 1, start_x + i);
