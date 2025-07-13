@@ -1,12 +1,11 @@
-#include <cstdio>
 #include <functional>
 #include <ncurses.h>
 #include <random>
 #include <ctime>
-#include <type_traits>
 #include <vector>
 #include <iostream>
 
+#include "myNcursesUtils.h"
 #include "overlay.h"
 #include "menu.h"
 #include "textBox.h"
@@ -39,15 +38,13 @@ int main() {
   GameState program_state;
   program_state.current_state = MainMenu;
   program_state.previous_state = MainMenu;
-  program_state.overlay = NULL;
-  program_state.menu = NULL;
 
   refresh();
 
-  VerticleProgressBar* bar = new VerticleProgressBar(27, 5, (y / 2) - (27 / 2), x / 13 * 11);
+  VerticleProgressBar bar(27, 5, (y / 2) - (27 / 2), x / 13 * 11);
 
   int button_width = 40;
-  Menu* main_menu = new Menu(y, x, 0, 0,
+  Menu main_menu(y, x, 0, 0,
     new std::vector<MenuButton*>({
       new MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2),
         [&](GameState& state) {
@@ -70,7 +67,7 @@ int main() {
     })
   );
 
-  Menu* pause_menu = new Menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
+  Menu pause_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
     new std::vector<MenuButton*>({
       new MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2),
         [&](GameState& state) {
@@ -87,10 +84,9 @@ int main() {
     })
   );
 
-  pause_menu->set_is_boxed(true);
+  pause_menu.set_is_boxed(true);
 
-  program_state.menu = main_menu;
-  program_state.menu->draw();
+  main_menu.draw();
   refresh();
 
   bool waiting_animation_switch = false;
@@ -118,13 +114,12 @@ int main() {
     switch (program_state.current_state) {
     case MainMenu:
       ch = getch();
-      if (program_state.menu->handle_input(ch, program_state)) {
-          program_state.menu->draw();
+      if (main_menu.handle_input(ch, program_state)) {
+          main_menu.draw();
       }
       if (program_state.current_state != MainMenu) {
           mousemask(0, NULL);
-          program_state.menu->clear();
-          program_state.menu = NULL;
+          main_menu.clear();
 
           if (program_state.current_state == Waiting) {
             fish_encounter_time = time(NULL) + (int)(rand() % 30);
@@ -138,10 +133,9 @@ int main() {
       if (ch == 27) {
         program_state.current_state = Paused;
         program_state.previous_state = Waiting;
-        program_state.menu = pause_menu;
         mousemask(BUTTON1_CLICKED, NULL);
-        program_state.menu->clear();
-        program_state.menu->draw();
+        pause_menu.clear();
+        pause_menu.draw();
         nocbreak();
         cbreak();
         break;
@@ -166,8 +160,7 @@ int main() {
 
       if (fish_encounter_time <= time(NULL)) {
         fish_encounter_time = -1; 
-        program_state.overlay = bar;
-        bar->set_progress(0);
+        bar.set_progress(0);
         program_state.current_state = Catching;
         program_state.previous_state = Waiting;
         fishing_bobber_waiting1.clear();
@@ -182,32 +175,31 @@ int main() {
       ch = getch();
       if (ch == 27) {
         program_state.current_state = Paused;
-        program_state.previous_state = Catching;
-        program_state.menu = pause_menu;
+        program_state.previous_state = Waiting;
         mousemask(BUTTON1_CLICKED, NULL);
-        program_state.menu->clear();
-        program_state.menu->draw();
+        pause_menu.clear();
+        pause_menu.draw();
         nocbreak();
         cbreak();
         break;
       }
 
       if (ch == 'b' && alternating_game_key != 'b') {
-        bar->set_progress(bar->get_progress() + fishing_power);
+        bar.set_progress(bar.get_progress() + fishing_power);
         alternating_game_key = 'b';
       }
       else if (ch == 'v' && alternating_game_key != 'v') {
-        bar->set_progress(bar->get_progress() + fishing_power);
+        bar.set_progress(bar.get_progress() + fishing_power);
         alternating_game_key = 'v';
       }
       else if (ch == ERR) {
-        bar->set_progress(bar->get_progress() - dropping_power);
+        bar.set_progress(bar.get_progress() - dropping_power);
       }
 
       catching_fish_indicator.draw();
       fishing_bobber_catching.draw();
-      if (program_state.overlay != NULL && bar->get_progress() > 0) {
-          program_state.overlay->draw();
+      if (bar.get_progress() > 0) {
+          bar.draw();
       }
       if (alternating_game_key == 'b') {
         b.clear();
@@ -228,10 +220,33 @@ int main() {
           b.draw();
       }
 
-      if (bar->get_progress() >= 1) {
+      if (bar.get_progress() >= 1) {
+        clear();
+        program_state.current_state = Waiting;
+        program_state.previous_state = Catching;
+        fish_encounter_time = time(NULL) + (int)(rand() % 30);
+        alternating_game_key = ' ';
+        fishing_bobber_catching.clear();
+        fishing_bobber_waiting1.draw();
+        catching_fish_indicator.clear();
+      }
+      break;
+
+    case Caught:
+      ch = getch();
+      if (ch == 27) {
+        program_state.current_state = Paused;
+        program_state.previous_state = Waiting;
+        mousemask(BUTTON1_CLICKED, NULL);
+        pause_menu.clear();
+        pause_menu.draw();
+        nocbreak();
+        cbreak();
+        break;
+      }
+      if (false) { // change
         mvprintw(0, 0, "you did it");
         clear();
-        program_state.overlay = NULL;
         program_state.current_state = Waiting;
         program_state.previous_state = Catching;
         fish_encounter_time = time(NULL) + (int)(rand() % 30);
@@ -244,8 +259,8 @@ int main() {
 
     case Paused:
       ch = getch();
-      if (program_state.menu->handle_input(ch, program_state)) {
-          program_state.menu->draw();
+      if (pause_menu.handle_input(ch, program_state)) {
+          pause_menu.draw();
       }
       if (ch == 27) {
         program_state.current_state = program_state.previous_state;
@@ -255,15 +270,11 @@ int main() {
             halfdelay(1);
           mousemask(0, NULL);
           program_state.previous_state = Paused;
-          program_state.menu->clear();
-          program_state.menu = NULL;
+          pause_menu.clear();
       }
       break;
 
     case Quit:
-      delete main_menu;
-      delete pause_menu;
-      delete bar;
       loop = false;
       break;
 
