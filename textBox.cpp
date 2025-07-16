@@ -70,7 +70,7 @@ void TextBox::draw(const std::vector<std::string>& text, int start_y, int start_
 }
 
 void TextBox::draw() {
-  draw(text, height, start_y, start_x, get_is_boxed(), color);
+  TextBox::draw(text, height, start_y, start_x, get_is_boxed(), color);
 }
 
 
@@ -78,10 +78,10 @@ TextBoxCentered::TextBoxCentered(std::vector<std::string> text, int height, int 
 TextBox(text, height, width, start_y, start_x, is_boxed, color) {}
 
 TextBoxCentered::TextBoxCentered(std::vector<std::string> text, int height, int width, int start_y, int start_x, bool is_boxed) :
-TextBox(text, height, width, start_y, start_x, is_boxed) {}
+TextBoxCentered(text, height, width, start_y, start_x, is_boxed, 0) {}
 
 TextBoxCentered::TextBoxCentered(std::vector<std::string> text, int height, int width, int start_y, int start_x) :
-TextBox(text, height, width, start_y, start_x) {}
+TextBoxCentered(text, height, width, start_y, start_x, false) {}
 
 void TextBoxCentered::draw(const std::vector<std::string>& text, int height, int width, int start_y, int start_x, bool is_boxed, int color) {
   int margin = 0;
@@ -117,5 +117,5 @@ void TextBoxCentered::draw(const std::vector<std::string>& text, int height, int
 }
 
 void TextBoxCentered::draw() {
-  draw(text, height, start_y, start_x, get_is_boxed(), color);
+  draw(text, height, width, start_y, start_x, get_is_boxed(), color);
 }

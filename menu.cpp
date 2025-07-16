@@ -42,19 +42,25 @@ bool MenuButton::is_mouse_on_button(MEVENT& event) {
   return false;
 }
 
-Menu::Menu(int height, int width, int start_y, int start_x, std::vector<MenuButton> menu_buttons, std::vector<TextBox> menu_texts) :
+Menu::Menu(int height, int width, int start_y, int start_x, std::vector<MenuButton> menu_buttons, std::vector<TextBox*> menu_texts) :
 Window(height, width, start_y, start_x, false) {
 
   this->menu_buttons = menu_buttons;
   if (menu_buttons.size() > 0) {
-  selected_button_index = 0;
-  menu_buttons[selected_button_index].set_is_selected(true);
+    selected_button_index = 0;
+    this->menu_buttons[selected_button_index].set_is_selected(true);
   }
   else // if the menu has no buttons
     selected_button_index = -1;
     // -1 means there are no buttons so dont try to access one
 
   this->menu_texts = menu_texts;
+}
+
+Menu::~Menu() {
+  for (TextBox* menu_text : menu_texts) {
+    delete menu_text;
+  }
 }
 
 void Menu::draw() {
@@ -65,8 +71,8 @@ void Menu::draw() {
     menu_button.draw();
   }
 
-  for (TextBox& menu_text : menu_texts) {
-    menu_text.draw();
+  for (TextBox* menu_text : menu_texts) {
+    menu_text->draw();
   }
 
 }

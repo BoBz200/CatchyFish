@@ -10,8 +10,10 @@
 #include "textBox.h"
 #include "globalState.h"
 #include "textAssets.h"
+#include "fish.h"
 
 bool prepare_color();
+std::vector<Fish> build_fishing_pool();
 
 int main() {
   initscr();
@@ -37,8 +39,6 @@ int main() {
   program_state.current_state = MainMenu;
   program_state.previous_state = MainMenu;
 
-  refresh();
-
   VerticleProgressBar bar(27, 5, (y / 2) - (27 / 2), x / 13 * 11);
 
   int button_width = 40;
@@ -56,12 +56,12 @@ int main() {
           state.current_state = Quit;
         }, 'q'),
     }),
-    std::vector<TextBox>({
-      TextBoxCentered(play_text, 9, button_width, y / 9 * 3 + 1, (x / 2) - (button_width / 2)),
-      TextBoxCentered(tutorial_text, 9, button_width, y / 9 * 5 + 1, (x / 2) - (button_width / 2)),
-      TextBoxCentered(quit_text, 9, button_width, y / 9 * 7 + 1, (x / 2) - (button_width / 2)),
-      TextBoxCentered(title_text2x, 18, 105, 1, (x / 2) - (105 / 2), false, COLOR_PAIR(3)),
-      TextBoxCentered(navigation_tip_text, 11, 35, y / 9 * 7, (x / 13 * 10), true, COLOR_PAIR(2)),
+    std::vector<TextBox*>({
+      new TextBoxCentered(play_text, 9, button_width, y / 9 * 3 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(tutorial_text, 9, button_width, y / 9 * 5 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(quit_text, 9, button_width, y / 9 * 7 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(title_text2x, 18, 105, 1, (x / 2) - (105 / 2), false, COLOR_PAIR(3)),
+      new TextBoxCentered(navigation_tip_text, 11, 35, y / 9 * 7, (x / 13 * 10), true, COLOR_PAIR(2)),
     })
   );
 
@@ -76,13 +76,25 @@ int main() {
           state.current_state = Quit;
         }, 'q'),
     }),
-    std::vector<TextBox>({
-      TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
-      TextBoxCentered(quit_text, 8, button_width, y / 6 * 4 - 1 + 1, (x / 2) - (button_width / 2)),
+    std::vector<TextBox*>({
+      new TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(quit_text, 8, button_width, y / 6 * 4 - 1 + 1, (x / 2) - (button_width / 2)),
     })
   );
-
   pause_menu.set_is_boxed(true);
+
+  Menu caught_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
+    std::vector<MenuButton>({
+      MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2),
+        [&](GameState& state) {
+          state.current_state = Waiting;
+        }, 'r'),
+    }),
+    std::vector<TextBox*>({
+      new TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
+    })
+  );
+  caught_menu.set_is_boxed(true);
 
   main_menu.draw();
   refresh();
@@ -90,10 +102,11 @@ int main() {
   bool waiting_animation_switch = false;
   bool can_switch = true;
 
-  char alternating_game_key = ' ';
   time_t fish_encounter_time = -1;
-  float fishing_power = 0.03;
-  float dropping_power = 0.005;
+  char alternating_game_key = ' ';
+
+  std::vector<Fish> fishing_pool = build_fishing_pool();
+  Fish chosen_fish = fishing_pool[(int)(rand() % fishing_pool.size())];
 
 
   TextBoxCentered b_pressed(b_button_pressed, 10, 15, y / 6 * 5, x / 2);
@@ -120,7 +133,8 @@ int main() {
           main_menu.clear();
 
           if (program_state.current_state == Waiting) {
-            fish_encounter_time = time(NULL) + (int)(rand() % 30);
+            fish_encounter_time = time(NULL) + chosen_fish.get_fish_delay() +
+                                  (int)(rand() % chosen_fish.get_random_fish_delay());
             halfdelay(1);
           }
       }
@@ -164,6 +178,7 @@ int main() {
         fishing_bobber_waiting1.clear();
         fishing_bobber_waiting2.clear();
         fishing_bobber_catching.draw();
+        catching_fish_indicator.draw();
         v.draw();
         b.draw();
       }
@@ -183,15 +198,15 @@ int main() {
       }
 
       if (ch == 'b' && alternating_game_key != 'b') {
-        bar.set_progress(bar.get_progress() + fishing_power);
+        bar.set_progress(bar.get_progress() + chosen_fish.get_fishing_power());
         alternating_game_key = 'b';
       }
       else if (ch == 'v' && alternating_game_key != 'v') {
-        bar.set_progress(bar.get_progress() + fishing_power);
+        bar.set_progress(bar.get_progress() + chosen_fish.get_fishing_power());
         alternating_game_key = 'v';
       }
       else if (ch == ERR) {
-        bar.set_progress(bar.get_progress() - dropping_power);
+        bar.set_progress(bar.get_progress() - chosen_fish.get_fish_strength());
       }
 
       catching_fish_indicator.draw();
@@ -220,38 +235,43 @@ int main() {
 
       if (bar.get_progress() >= 1) {
         clear();
-        program_state.current_state = Waiting;
+        program_state.current_state = Caught;
         program_state.previous_state = Catching;
-        fish_encounter_time = time(NULL) + (int)(rand() % 30);
         alternating_game_key = ' ';
         fishing_bobber_catching.clear();
-        fishing_bobber_waiting1.draw();
         catching_fish_indicator.clear();
+        mousemask(BUTTON1_CLICKED, NULL);
+        nocbreak();
+        cbreak();
       }
       break;
 
     case Caught:
+      caught_menu.draw();
+      mvprintw(y / 2, x / 2, chosen_fish.get_name().c_str());
+
       ch = getch();
+      if (caught_menu.handle_input(ch, program_state)) {
+          caught_menu.draw();
+      }
       if (ch == 27) {
         program_state.current_state = Paused;
-        program_state.previous_state = Waiting;
+        program_state.previous_state = Caught;
         mousemask(BUTTON1_CLICKED, NULL);
-        pause_menu.clear();
+        caught_menu.clear();
         pause_menu.draw();
-        nocbreak();
-        cbreak();
         break;
       }
-      if (false) { // change
-        mvprintw(0, 0, "you did it");
-        clear();
+      if (program_state.current_state != Caught) {
+        mousemask(0, NULL);
         program_state.current_state = Waiting;
-        program_state.previous_state = Catching;
-        fish_encounter_time = time(NULL) + (int)(rand() % 30);
-        alternating_game_key = ' ';
-        fishing_bobber_catching.clear();
+        program_state.previous_state = Caught;
+        halfdelay(1);
+        chosen_fish = fishing_pool[(int)(rand() % fishing_pool.size())];
+        fish_encounter_time = time(NULL) + chosen_fish.get_fish_delay() +
+                              (int)(rand() % chosen_fish.get_random_fish_delay());
+        caught_menu.clear();
         fishing_bobber_waiting1.draw();
-        catching_fish_indicator.clear();
       }
       break;
 
@@ -299,4 +319,12 @@ bool prepare_color() {
   init_pair(3, COLOR_BLUE, COLOR_BLACK);
   init_pair(4, COLOR_RED, COLOR_BLACK);
   return true;
+}
+
+std::vector<Fish> build_fishing_pool() {
+  std::vector<Fish> pool;
+  pool.push_back(Fish("Catfish", 0.03, 0.005, 5, 25, 5));
+  pool.push_back(Fish("Bass", 0.03, 0.005, 5, 25, 5));
+
+  return pool;
 }

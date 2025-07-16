@@ -30,7 +30,8 @@ private:
 
 class Menu : public Window {
 public:
-  Menu(int height, int width, int start_y, int start_x, std::vector<MenuButton> menu_buttons, std::vector<TextBox> menu_texts);
+  Menu(int height, int width, int start_y, int start_x, std::vector<MenuButton> menu_buttons, std::vector<TextBox*> menu_texts);
+  ~Menu();
 
   void draw() override;
   bool handle_input(int ch, GameState& state);
@@ -38,5 +39,5 @@ public:
 private:
   int selected_button_index;
   std::vector<MenuButton> menu_buttons;
-  std::vector<TextBox> menu_texts;
+  std::vector<TextBox*> menu_texts;
 };
