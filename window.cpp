@@ -13,7 +13,7 @@ Window::Window(int height, int width, int start_y, int start_x, bool is_boxed) {
 Window::Window(int height, int width, int start_y, int start_x) :
 Window(height, width, start_y, start_x, true) {}
 
-void Window::clear() {
+void Window::clear() const {
   for (int i = 0; i < height; i++) {
     move(start_y + i, start_x);
     for (int j = 0; j < width; j++) {
@@ -45,10 +45,10 @@ void Window::box(int height, int width, int start_y, int start_x) {
   box(height, width, start_y, start_x, 0);
 }
 
-void Window::box(int color) {
+void Window::box(int color) const {
   box(height, width, start_y, start_x, color);
 }
 
-void Window::box() {
+void Window::box() const {
   box(0);
 }

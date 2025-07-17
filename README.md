@@ -5,6 +5,8 @@
 Catchy Fish is a text based fishing mini game that runs in your terminal.
 Try to catch all of them.
 
+This project is my final for cis25.
+
 ## Installation
 
 ### Dependencies
@@ -38,4 +40,15 @@ brew install ncurses
 Use the command below to clone the repo
 ```sh
 git clone https://github.com/BoBz200/CatchyFish
+```
+
+## Compile
+
+To compile you can run:
+
+> [!NOTE]
+> You can change 'main.out' to what you want
+
+```sh
+g++ -l ncurses main.cpp bar.cpp menu.cpp textBox.cpp window.cpp fish.cpp -o main.out
 ```

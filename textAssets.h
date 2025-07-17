@@ -196,3 +196,11 @@ std::vector<std::string> exclamation_mark = {
   " /  \\ ",
   " \\__/ ",
 };
+
+
+std::vector<std::string> x_text = {
+"__  __",
+"\\ \\/ /",
+" >  < ",
+"/_/\\_\\",
+};

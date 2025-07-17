@@ -17,7 +17,7 @@ public:
   bool get_is_selected() const;
   void set_is_selected(bool is_selected);
 
-  void draw() override;
+  void draw() const override;
   void action(GameState& state);
 
   bool is_mouse_on_button(MEVENT& event);
@@ -33,7 +33,7 @@ public:
   Menu(int height, int width, int start_y, int start_x, std::vector<MenuButton> menu_buttons, std::vector<TextBox*> menu_texts);
   ~Menu();
 
-  void draw() override;
+  void draw() const override;
   bool handle_input(int ch, GameState& state);
 
 private:

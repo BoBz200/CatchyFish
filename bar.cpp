@@ -43,7 +43,7 @@ ProgressBar(progress, height, width, start_y, start_x) {}
 VerticleProgressBar::VerticleProgressBar(int height, int width, int start_y, int start_x) :
 ProgressBar(height, width, start_y, start_x) {}
 
-void VerticleProgressBar::draw() {
+void VerticleProgressBar::draw() const {
   box();
 
   int top = (1 - progress) * (height - 2);
@@ -65,7 +65,7 @@ ProgressBar(progress, height, width, start_y, start_x) {}
 HorizontalProgressBar::HorizontalProgressBar(int height, int width, int start_y, int start_x) :
 ProgressBar(height, width, start_y, start_x) {}
 
-void HorizontalProgressBar::draw() {
+void HorizontalProgressBar::draw() const {
   box();
   int top = progress * (width - 2);
   for (int i = 1; i <  width - 1; i++) {

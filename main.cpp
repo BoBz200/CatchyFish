@@ -86,13 +86,13 @@ int main() {
 
   Menu caught_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
     std::vector<MenuButton>({
-      MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2),
+      MenuButton(5, 12, (y / 6) + 2, (x / 6) + 3,
         [&](GameState& state) {
           state.current_state = Waiting;
         }, 'r'),
     }),
     std::vector<TextBox*>({
-      new TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(x_text, 5, 12, (y / 6) + 2, (x / 6) + 3)
     })
   );
   caught_menu.set_is_boxed(true);

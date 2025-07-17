@@ -24,7 +24,7 @@ public:
   VerticleProgressBar(float progress, int height, int width, int start_y, int start_x);
   VerticleProgressBar(int height, int width, int start_y, int start_x);
 
-  void draw() override;
+  void draw() const override;
 };
 
 class HorizontalProgressBar: public ProgressBar {
@@ -32,5 +32,5 @@ public:
   HorizontalProgressBar(float progress, int height, int width, int start_y, int start_x);
   HorizontalProgressBar(int height, int width, int start_y, int start_x);
 
-  void draw() override;
+  void draw() const override;
 };

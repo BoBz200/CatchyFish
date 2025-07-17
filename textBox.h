@@ -17,7 +17,7 @@ public:
   static void draw(const std::vector<std::string>& text, int start_y, int start_x, int color);
   static void draw(const std::vector<std::string>& text, int start_y, int start_x);
 
-  virtual void draw();
+  virtual void draw() const;
 
 protected:
   std::vector<std::string> text;
@@ -34,5 +34,5 @@ public:
   static void draw(const std::vector<std::string>& text, int height, int width, int start_y, int start_x, int color);
   static void draw(const std::vector<std::string>& text, int height, int width, int start_y, int start_x);
 
-  void draw() override;
+  void draw() const override;
 };

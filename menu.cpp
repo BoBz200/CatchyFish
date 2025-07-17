@@ -27,7 +27,7 @@ void MenuButton::set_is_selected(bool is_selected) {
   this->is_selected = is_selected;
 }
 
-void MenuButton::draw() {
+void MenuButton::draw() const {
   int increase = is_selected ? 1 : 0;
   box(height + (increase * 2), width + (increase * 2), start_y - increase, start_x - increase);
 }
@@ -63,18 +63,17 @@ Menu::~Menu() {
   }
 }
 
-void Menu::draw() {
+void Menu::draw() const {
   if (get_is_boxed())
     box();
 
-  for (MenuButton& menu_button : menu_buttons) {
+  for (const MenuButton& menu_button : menu_buttons) {
     menu_button.draw();
   }
 
-  for (TextBox* menu_text : menu_texts) {
+  for (const TextBox* menu_text : menu_texts) {
     menu_text->draw();
   }
-
 }
 
 bool Menu::handle_input(int ch, GameState& state) {

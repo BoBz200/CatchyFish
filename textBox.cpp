@@ -69,7 +69,7 @@ void TextBox::draw(const std::vector<std::string>& text, int start_y, int start_
   draw(text, start_y, start_x, 0);
 }
 
-void TextBox::draw() {
+void TextBox::draw() const{
   TextBox::draw(text, height, start_y, start_x, get_is_boxed(), color);
 }
 
@@ -116,6 +116,6 @@ void TextBoxCentered::draw(const std::vector<std::string>& text, int height, int
   draw(text, height, width, start_y, start_x, 0);
 }
 
-void TextBoxCentered::draw() {
+void TextBoxCentered::draw() const {
   draw(text, height, width, start_y, start_x, get_is_boxed(), color);
 }
