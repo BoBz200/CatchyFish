@@ -25,7 +25,7 @@ apt-get install libncurses5-dev libncursesw5-dev
 ```
 
 </details>
-<details><summary> apt </summary>
+<details><summary> homebrew </summary>
 
 ```sh
 brew install ncurses
