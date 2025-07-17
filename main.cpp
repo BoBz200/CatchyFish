@@ -39,7 +39,7 @@ int main() {
   program_state.current_state = MainMenu;
   program_state.previous_state = MainMenu;
 
-  VerticleProgressBar bar(27, 5, (y / 2) - (27 / 2), x / 13 * 11);
+  VerticleProgressBar bar(27, 5, (y / 2) - (27 / 2), x / 13 * 2);
 
   int button_width = 40;
   Menu main_menu(y, x, 0, 0,
@@ -50,6 +50,7 @@ int main() {
         }, 'p'),
       MenuButton(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2),
         [&](GameState& state) {
+          state.current_state = TutorialWaiting;
         }, 't'),
       MenuButton(9, button_width, y / 9 * 7, (x / 2) - (button_width / 2),
         [&](GameState& state) {
@@ -132,19 +133,25 @@ int main() {
           mousemask(0, NULL);
           main_menu.clear();
 
-          if (program_state.current_state == Waiting) {
-            fish_encounter_time = time(NULL) + chosen_fish.get_fish_delay() +
-                                  (int)(rand() % chosen_fish.get_random_fish_delay());
+          if (program_state.current_state == Waiting || program_state.current_state == TutorialWaiting) {
+            if (program_state.current_state == TutorialWaiting)
+              fish_encounter_time = time(NULL ) + 15;
+            else
+              fish_encounter_time = time(NULL) + chosen_fish.get_fish_delay() +
+                                    (int)(rand() % chosen_fish.get_random_fish_delay());
             halfdelay(1);
           }
       }
       break;
 
+    case TutorialWaiting:
+      TextBoxCentered::draw(waiting_tip_text, 11, 40, y / 9 * 7, (x / 13 * 10), true, COLOR_PAIR(2));
+
     case Waiting:
       ch = getch();
       if (ch == 27) {
+        program_state.previous_state = program_state.current_state;
         program_state.current_state = Paused;
-        program_state.previous_state = Waiting;
         mousemask(BUTTON1_CLICKED, NULL);
         pause_menu.clear();
         pause_menu.draw();
@@ -173,7 +180,12 @@ int main() {
       if (fish_encounter_time <= time(NULL)) {
         fish_encounter_time = -1; 
         bar.set_progress(0);
-        program_state.current_state = Catching;
+        if (program_state.current_state == TutorialWaiting) {
+          clear();
+          program_state.current_state = TutorialCatching;
+        }
+        else
+          program_state.current_state = Catching;
         program_state.previous_state = Waiting;
         fishing_bobber_waiting1.clear();
         fishing_bobber_waiting2.clear();
@@ -184,11 +196,14 @@ int main() {
       }
       break;
 
+    case TutorialCatching:
+      TextBoxCentered::draw(catching_tip_text, 11, 40, y / 9 * 7, (x / 13 * 10), true, COLOR_PAIR(2));
+
     case Catching:
       ch = getch();
       if (ch == 27) {
+        program_state.previous_state = program_state.current_state;
         program_state.current_state = Paused;
-        program_state.previous_state = Waiting;
         mousemask(BUTTON1_CLICKED, NULL);
         pause_menu.clear();
         pause_menu.draw();
@@ -211,7 +226,7 @@ int main() {
 
       catching_fish_indicator.draw();
       fishing_bobber_catching.draw();
-      if (bar.get_progress() > 0) {
+      if (alternating_game_key != ' ') {
           bar.draw();
       }
       if (alternating_game_key == 'b') {
@@ -284,7 +299,8 @@ int main() {
         program_state.current_state = program_state.previous_state;
       }
       if (program_state.current_state != Paused) {
-          if (program_state.current_state == Waiting || program_state.current_state == Catching)
+          if (program_state.current_state == Waiting || program_state.current_state == Catching ||
+          program_state.current_state == TutorialWaiting || program_state.current_state == TutorialCatching)
             halfdelay(1);
           mousemask(0, NULL);
           program_state.previous_state = Paused;
@@ -323,8 +339,26 @@ bool prepare_color() {
 
 std::vector<Fish> build_fishing_pool() {
   std::vector<Fish> pool;
-  pool.push_back(Fish("Catfish", 0.03, 0.005, 5, 25, 5));
-  pool.push_back(Fish("Bass", 0.03, 0.005, 5, 25, 5));
+  for (int i = 0; i < 5; i++) {
+    pool.push_back(Fish("Catfish", 0.03, 0.005, 5, 25, 5, 0.12, 2.5));
+    pool.push_back(Fish("Bass", 0.03, 0.005, 5, 25, 5, 0.3, 0.66));
+    pool.push_back(Fish("Cod", 0.03, 0.005, 5, 25, 5, 1, 2));
+    pool.push_back(Fish("Trout", 0.03, 0.005, 5, 25, 5, 0.12, 0.99));
+    pool.push_back(Fish("Bluegill", 0.03, 0.005, 5, 25, 5, 0.10, 0.30));
+  }
+
+  for (int i = 0; i < 3; i++) {
+    pool.push_back(Fish("Salmon", 0.03, 0.005, 3, 25, 5, 0.50, 0.71));
+    pool.push_back(Fish("Crawfish", 0.03, 0.005, 3, 25, 5, 0.10, 0.17));
+  }
+
+  for (int i = 0; i < 2; i++) {
+    pool.push_back(Fish("Eel", 0.03, 0.005, 2, 25, 5, 0.05, 4));
+  }
+
+  for (int i = 0; i < 1; i++) {
+    pool.push_back(Fish("Octopus", 0.03, 0.005, 1, 25, 5, 2.1, 4.8));
+  }
 
   return pool;
 }

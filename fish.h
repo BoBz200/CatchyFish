@@ -5,7 +5,8 @@
 class Fish {
 public:
   Fish(std::string name, float fishing_power, float fish_strength,
-       int fish_delay, int random_fish_delay, int rarity);
+       int fish_delay, int random_fish_delay, int rarity, float min_size,
+       float max_size);
 
   std::string get_name() const;
   float get_fishing_power() const;// = 0.03;
@@ -13,6 +14,8 @@ public:
   int get_fish_delay() const;// = 5;
   int get_random_fish_delay() const;// = 25;
   int get_rarity() const;
+  float get_min_size() const;
+  float get_max_size() const;
 
 private:
   std::string name;
@@ -29,4 +32,8 @@ private:
 
   // number of fish added to the selection pool
   int rarity;
+
+  // bounds of fishes size
+  float min_size;
+  float max_size;
 };

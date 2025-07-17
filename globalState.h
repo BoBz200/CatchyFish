@@ -2,7 +2,9 @@
 
 enum state {
   MainMenu,
+  TutorialWaiting,
   Waiting,
+  TutorialCatching,
   Catching,
   Caught,
   Paused,

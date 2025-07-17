@@ -60,6 +60,29 @@ std::vector<std::string> navigation_tip_text = {
   " [ j k ] ",
 };
 
+std::vector<std::string> waiting_tip_text = {
+  "(i)                                ",
+  "While waiting for a fish",
+  "the bobber will float up and down",
+  "waiting could be 5 - 35 seconds",
+  "",
+  "To pause the game at any time press:",
+  "[Esc]",
+  "While paused you can:",
+  "quite or view your collection",
+};
+
+std::vector<std::string> catching_tip_text = {
+  "(i)                                ",
+  "When the fish is on the hook",
+  "you will see an exclemation mark.",
+  "To catch the fish press 'b' and 'v'",
+  "in alternating succession",
+  "",
+  "As you press 'b' and 'v' the bar",
+  "on the left will increase",
+};
+
 std::vector<std::string> resume_text = {
 " ____                               ",
 "|  _ \\ ___  ___ _   _ _ __ ___   ___",
