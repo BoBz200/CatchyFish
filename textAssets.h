@@ -69,13 +69,13 @@ std::vector<std::string> waiting_tip_text = {
   "To pause the game at any time press:",
   "[Esc]",
   "While paused you can:",
-  "quite or view your collection",
+  "quit or view your collection",
 };
 
 std::vector<std::string> catching_tip_text = {
   "(i)                                ",
-  "When the fish is on the hook",
-  "you will see an exclemation mark.",
+  "When the fish is on the hook,",
+  "you will see an exclamation mark.",
   "To catch the fish press 'b' and 'v'",
   "in alternating succession",
   "",
