@@ -12,8 +12,11 @@
 #include "textAssets.h"
 #include "fish.h"
 
+int get_fish_rarity_color(Rarity rarity);
+std::vector<std::string> get_fish_variety_text(FishVariety name);
+std::vector<std::string> get_fish_rarity_text(Rarity rarity);
 bool prepare_color();
-std::vector<Fish> build_fishing_pool();
+std::vector<FishVariety> build_fishing_pool();
 
 int main() {
   initscr();
@@ -106,8 +109,8 @@ int main() {
   time_t fish_encounter_time = -1;
   char alternating_game_key = ' ';
 
-  std::vector<Fish> fishing_pool = build_fishing_pool();
-  Fish chosen_fish = fishing_pool[(int)(rand() % fishing_pool.size())];
+  std::vector<FishVariety> fishing_pool = build_fishing_pool();
+  Fish chosen_fish = Fish(fishing_pool[(int)(rand() % fishing_pool.size())]);
 
 
   TextBoxCentered b_pressed(b_button_pressed, 10, 15, y / 6 * 5, x / 2);
@@ -135,7 +138,7 @@ int main() {
 
           if (program_state.current_state == Waiting || program_state.current_state == TutorialWaiting) {
             if (program_state.current_state == TutorialWaiting)
-              fish_encounter_time = time(NULL ) + 15;
+              fish_encounter_time = time(NULL) + 15;
             else
               fish_encounter_time = time(NULL) + chosen_fish.get_fish_delay() +
                                     (int)(rand() % chosen_fish.get_random_fish_delay());
@@ -165,7 +168,7 @@ int main() {
         waiting_animation_switch = !waiting_animation_switch;
         can_switch = false;
       }
-      if (!can_switch &&time(NULL) % 3 == 1)
+      if (!can_switch && time(NULL) % 3 == 1)
         can_switch = true;
 
       if (waiting_animation_switch) {
@@ -263,7 +266,12 @@ int main() {
 
     case Caught:
       caught_menu.draw();
-      mvprintw(y / 2, x / 2, chosen_fish.get_name().c_str());
+
+      TextBoxCentered::draw(get_fish_rarity_text(chosen_fish.get_rarity()),
+                            6, x / 3 * 2, (y / 6) + 1, (x / 6),
+                            get_fish_rarity_color(chosen_fish.get_rarity()));
+      TextBoxCentered::draw(get_fish_variety_text(chosen_fish.get_name()),
+                            6, x / 3 * 2, (y / 6) + 12, (x / 6));
 
       ch = getch();
       if (caught_menu.handle_input(ch, program_state)) {
@@ -282,7 +290,7 @@ int main() {
         program_state.current_state = Waiting;
         program_state.previous_state = Caught;
         halfdelay(1);
-        chosen_fish = fishing_pool[(int)(rand() % fishing_pool.size())];
+        chosen_fish = Fish(fishing_pool[(int)(rand() % fishing_pool.size())]);
         fish_encounter_time = time(NULL) + chosen_fish.get_fish_delay() +
                               (int)(rand() % chosen_fish.get_random_fish_delay());
         caught_menu.clear();
@@ -307,7 +315,6 @@ int main() {
           pause_menu.clear();
       }
       break;
-
     case Quit:
       loop = false;
       break;
@@ -334,31 +341,84 @@ bool prepare_color() {
   init_pair(2, COLOR_GREEN, COLOR_BLACK);
   init_pair(3, COLOR_BLUE, COLOR_BLACK);
   init_pair(4, COLOR_RED, COLOR_BLACK);
+  init_pair(5, COLOR_YELLOW, COLOR_BLACK);
   return true;
 }
 
-std::vector<Fish> build_fishing_pool() {
-  std::vector<Fish> pool;
+std::vector<FishVariety> build_fishing_pool() {
+  std::vector<FishVariety> pool;
   for (int i = 0; i < 5; i++) {
-    pool.push_back(Fish("Catfish", 0.03, 0.005, 5, 25, 5, 0.12, 2.5));
-    pool.push_back(Fish("Bass", 0.03, 0.005, 5, 25, 5, 0.3, 0.66));
-    pool.push_back(Fish("Cod", 0.03, 0.005, 5, 25, 5, 1, 2));
-    pool.push_back(Fish("Trout", 0.03, 0.005, 5, 25, 5, 0.12, 0.99));
-    pool.push_back(Fish("Bluegill", 0.03, 0.005, 5, 25, 5, 0.10, 0.30));
+    pool.push_back(Catfish);
+    pool.push_back(Bass);
+    pool.push_back(Cod);
+    pool.push_back(Trout);
+    pool.push_back(Bluegill);
   }
 
   for (int i = 0; i < 3; i++) {
-    pool.push_back(Fish("Salmon", 0.03, 0.005, 3, 25, 5, 0.50, 0.71));
-    pool.push_back(Fish("Crawfish", 0.03, 0.005, 3, 25, 5, 0.10, 0.17));
+    pool.push_back(Salmon);
+    pool.push_back(Crawfish);
   }
 
   for (int i = 0; i < 2; i++) {
-    pool.push_back(Fish("Eel", 0.03, 0.005, 2, 25, 5, 0.05, 4));
+    pool.push_back(Eel);
   }
 
   for (int i = 0; i < 1; i++) {
-    pool.push_back(Fish("Octopus", 0.03, 0.005, 1, 25, 5, 2.1, 4.8));
+    pool.push_back(Octopus);
   }
 
   return pool;
+}
+
+std::vector<std::string> get_fish_variety_text(FishVariety name) {
+  switch (name) {
+    case Catfish:
+      return catfish_text;
+    case Bass:
+      return bass_text;
+    case Cod:
+        return cod_text;
+    case Trout:
+      return trout_text;
+    case Bluegill:
+      return bluegill_text;
+    case Salmon:
+      return salmon_text;
+    case Crawfish:
+      return crawfish_text;
+    case Eel:
+      return eel_text;
+    case Octopus:
+      return octopus_text;
+  }
+  return catfish_text;
+}
+
+std::vector<std::string> get_fish_rarity_text(Rarity rarity) {
+  switch (rarity) {
+    case Common:
+      return common_text;
+    case Uncommon:
+      return uncommon_text;
+    case Rare:
+      return rare_text;
+    case Legendary:
+      return legendary_text;
+  }
+  return common_text;
+}
+
+int get_fish_rarity_color(Rarity rarity) {
+  switch (rarity) {
+    case Common:
+      return 0;
+    case Uncommon:
+      return COLOR_PAIR(2);
+    case Rare:
+      return COLOR_PAIR(3);
+    case Legendary:
+      return COLOR_PAIR(5);
+  }
+  return 0;
 }

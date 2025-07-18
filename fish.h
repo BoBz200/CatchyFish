@@ -1,24 +1,48 @@
 #pragma once
 
+#include <vector>
 #include <string>
+
+enum Rarity {
+  Common,
+  Uncommon,
+  Rare,
+  Legendary,
+};
+
+enum FishVariety {
+  Catfish,
+  Bass,
+  Cod,
+  Trout,
+  Bluegill,
+  Salmon,
+  Crawfish,
+  Eel,
+  Octopus,
+};
 
 class Fish {
 public:
-  Fish(std::string name, float fishing_power, float fish_strength,
-       int fish_delay, int random_fish_delay, int rarity, float min_size,
+  Fish(FishVariety name, float fishing_power, float fish_strength,
+       int fish_delay, int random_fish_delay, Rarity rarity, float min_size,
        float max_size);
 
-  std::string get_name() const;
+  Fish(FishVariety name);
+  void init_rarity(Rarity rarity);
+  void init_size(float min_size, float max_size);
+
+  FishVariety get_name() const;
   float get_fishing_power() const;// = 0.03;
   float get_fish_strength() const;// = 0.005;
   int get_fish_delay() const;// = 5;
   int get_random_fish_delay() const;// = 25;
-  int get_rarity() const;
+  Rarity get_rarity() const;
   float get_min_size() const;
   float get_max_size() const;
 
 private:
-  std::string name;
+  FishVariety name;
 
   // amount bar increases on click
   float fishing_power;
@@ -31,7 +55,7 @@ private:
   int random_fish_delay;
 
   // number of fish added to the selection pool
-  int rarity;
+  Rarity rarity;
 
   // bounds of fishes size
   float min_size;

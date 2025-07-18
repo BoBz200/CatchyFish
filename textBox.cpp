@@ -18,6 +18,9 @@ TextBox::TextBox(std::vector<std::string> text, int height, int width, int start
 Window(height, width, start_y, start_x, false) {}
 
 void TextBox::draw(const std::vector<std::string>& text, int height, int width, int start_y, int start_x, bool is_boxed, int color) {
+  if (has_colors() != true)
+    color = 0;
+
   int margin = 0;
   if (is_boxed) {
     Window::box(height, width, start_y, start_x, color);
@@ -49,6 +52,9 @@ void TextBox::draw(const std::vector<std::string>& text, int height, int width, 
 }
 
 void TextBox::draw(const std::vector<std::string>& text, int start_y, int start_x, int color) {
+  if (has_colors() != true)
+    color = 0;
+
   for (int i = 0; i < text.size(); i++) {
     std::string line = text[i];
     move(start_y + i, start_x);
@@ -84,6 +90,9 @@ TextBoxCentered::TextBoxCentered(std::vector<std::string> text, int height, int 
 TextBoxCentered(text, height, width, start_y, start_x, false) {}
 
 void TextBoxCentered::draw(const std::vector<std::string>& text, int height, int width, int start_y, int start_x, bool is_boxed, int color) {
+  if (has_colors() != true)
+    color = 0;
+
   int margin = 0;
   if (is_boxed) {
     Window::box(height, width, start_y, start_x, color);

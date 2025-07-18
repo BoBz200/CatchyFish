@@ -12,7 +12,7 @@ This project is my final for cis25.
 ### Dependencies
 
 Catchy fish uses the c Library `Ncurses` to draw on the terminal.
-You can use you own package manager to install this.
+You can use your own package manager to install this.
 <details><summary> pacman </summary>
 
 ```sh
