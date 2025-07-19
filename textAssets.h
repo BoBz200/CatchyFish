@@ -1,4 +1,3 @@
-#include "fish.h"
 #include <vector>
 #include <string>
 
@@ -407,4 +406,11 @@ std::vector<std::string> m_text = {
 "| '_ ` _ \\ ",
 "| | | | | |",
 "|_| |_| |_|",
+};
+
+std::vector<std::string> new_text = {
+" _ __   _____      __",
+"| '_ \\ / _ \\ \\ /\\ / /",
+"| | | |  __/\\ V  V / ",
+"|_| |_|\\___| \\_/\\_/  ",
 };

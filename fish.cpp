@@ -1,4 +1,5 @@
 #include "fish.h"
+#include <string>
 
 Fish::Fish(FishVariety name, float fishing_power, float fish_strength,
            int fish_delay, int random_fish_delay, Rarity rarity, float min_size,
@@ -18,15 +19,15 @@ void Fish::init_rarity(Rarity rarity) {
   switch (rarity) {
     case Common:
       this->rarity = Common;
-      fishing_power = 0.03;
-      fish_strength = 0.005;
+      fishing_power = 0.04;
+      fish_strength = 0.007;
       fish_delay = 5;
       random_fish_delay = 25;
       break;
     case Uncommon:
       this->rarity = Uncommon;
       fishing_power = 0.03;
-      fish_strength = 0.005;
+      fish_strength = 0.007;
       fish_delay = 5;
       random_fish_delay = 25;
       break;
@@ -35,13 +36,13 @@ void Fish::init_rarity(Rarity rarity) {
       fishing_power = 0.03;
       fish_strength = 0.005;
       fish_delay = 5;
-      random_fish_delay = 25;
+      random_fish_delay = 30;
       break;
     case Legendary:
       this->rarity = Legendary;
-      fishing_power = 0.03;
-      fish_strength = 0.005;
-      fish_delay = 5;
+      fishing_power = 0.025;
+      fish_strength = 0.01;
+      fish_delay = 10;
       random_fish_delay = 25;
       break;
   }
@@ -103,8 +104,12 @@ Fish::Fish(FishVariety name) {
   }
 }
 
+Fish::Fish(FishVariety name, float size) :
+Fish(name) {
+  this->size = size;
+};
 
-FishVariety Fish::get_name() const {
+FishVariety Fish::get_variety() const {
   return name;
 }
 float Fish::get_fishing_power() const {
@@ -130,4 +135,29 @@ float Fish::get_max_size() const {
 }
 float Fish::get_size() const {
   return size;
+}
+
+std::string Fish::get_name() const {
+  switch (name) {
+    case Catfish:
+      return "Catfish";
+    case Bass:
+      return "Bass";
+    case Cod:
+        return "Cod";
+    case Trout:
+      return "Trout";
+    case Bluegill:
+      return "Bluegill";
+    case Salmon:
+      return "Salmon";
+    case Crawfish:
+      return "Crawfish";
+    case Eel:
+      return "Eel";
+    case Octopus:
+      return "Octopus";
+    default:
+      return "";
+  }
 }

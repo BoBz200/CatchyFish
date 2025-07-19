@@ -29,20 +29,24 @@ public:
        float max_size);
 
   Fish(FishVariety name);
-  void init_rarity(Rarity rarity);
-  void init_size(float min_size, float max_size);
+  Fish(FishVariety name, float size);
 
-  FishVariety get_name() const;
-  float get_fishing_power() const;// = 0.03;
-  float get_fish_strength() const;// = 0.005;
-  int get_fish_delay() const;// = 5;
-  int get_random_fish_delay() const;// = 25;
+  FishVariety get_variety() const;
+  float get_fishing_power() const;
+  float get_fish_strength() const;
+  int get_fish_delay() const;
+  int get_random_fish_delay() const;
   Rarity get_rarity() const;
   float get_min_size() const;
   float get_max_size() const;
   float get_size() const;
 
+  // return the variety as a string
+  std::string get_name() const;
+
 private:
+  void init_rarity(Rarity rarity);
+  void init_size(float min_size, float max_size);
   FishVariety name;
 
   // amount bar increases on click

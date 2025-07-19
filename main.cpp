@@ -11,6 +11,7 @@
 #include "globalState.h"
 #include "textAssets.h"
 #include "fish.h"
+#include "collection.h"
 
 int get_fish_rarity_color(Rarity rarity);
 std::vector<std::string> get_fish_variety_text(FishVariety name);
@@ -113,6 +114,8 @@ int main() {
   std::vector<FishVariety> fishing_pool = build_fishing_pool();
   Fish chosen_fish = Fish(fishing_pool[(int)(rand() % fishing_pool.size())]);
 
+  Collection collection = Collection();
+  collection.load_from_file();
 
   TextBoxCentered b_pressed(b_button_pressed, 10, 15, y / 6 * 5, x / 2);
   TextBoxCentered b(b_button, 10, 15, y / 6 * 5, x / 2);
@@ -271,21 +274,25 @@ int main() {
       TextBoxCentered::draw(get_fish_rarity_text(chosen_fish.get_rarity()),
                             6, x / 3 * 2, (y / 6) + 1, (x / 6),
                             get_fish_rarity_color(chosen_fish.get_rarity()));
-      TextBoxCentered::draw(get_fish_variety_text(chosen_fish.get_name()),
+      TextBoxCentered::draw(get_fish_variety_text(chosen_fish.get_variety()),
                             6, x / 3 * 2, (y / 6) + 12, (x / 6));
-      int size = (100 * chosen_fish.get_min_size());
-      // 46
+
+      if (!collection.is_fish_inside(chosen_fish.get_variety()))
+        TextBoxCentered::draw(new_text, 6, 21, (y / 6) + 8, (x / 2) + 15, COLOR_PAIR(4));
+
+      int size = (100 * chosen_fish.get_size());
+      int color = collection.is_fish_bigger(chosen_fish) ? COLOR_PAIR(4) : 0;
       TextBoxCentered::draw(get_number_text(size / 100),
-                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2));
+                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2), color);
       TextBoxCentered::draw(period_text,
-                            5, 3, (y / 6) + 20, (x / 2) - (38 / 2) + 8);
+                            5, 3, (y / 6) + 20, (x / 2) - (38 / 2) + 8, color);
       TextBoxCentered::draw(get_number_text((size / 10) % 10),
-                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2) + 11);
+                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2) + 11, color);
       TextBoxCentered::draw(get_number_text(size % 10),
-                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2) + 19);
+                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2) + 19, color);
       TextBoxCentered::draw(m_text,
-                            5, 11, (y / 6) + 20, (x / 2) - (38 / 2) + 27);
-      mvprintw(0, 0, "%d.%dm", size / 100, size % 100);
+                            5, 11, (y / 6) + 20, (x / 2) - (38 / 2) + 27, color);
+      // mvprintw(0, 0, "%d.%dm", size / 100, size % 100);
 
       ch = getch();
       if (caught_menu.handle_input(ch, program_state)) {
@@ -304,6 +311,12 @@ int main() {
         program_state.current_state = Waiting;
         program_state.previous_state = Caught;
         halfdelay(1);
+
+        if (collection.is_fish_bigger(chosen_fish)) {
+            collection.add(chosen_fish);
+            collection.save_to_file();
+        }
+
         chosen_fish = Fish(fishing_pool[(rand() % fishing_pool.size())]);
         fish_encounter_time = time(NULL) + chosen_fish.get_fish_delay() +
                               (rand() % chosen_fish.get_random_fish_delay());
@@ -427,6 +440,9 @@ std::vector<std::string> get_fish_rarity_text(Rarity rarity) {
 }
 
 int get_fish_rarity_color(Rarity rarity) {
+  if (!has_colors())
+    return 0;
+
   switch (rarity) {
     case Common:
       return 0;
