@@ -50,5 +50,5 @@ To compile you can run:
 > You can change 'main.out' to what you want
 
 ```sh
-g++ -l ncurses main.cpp bar.cpp menu.cpp textBox.cpp window.cpp fish.cpp -o main.out
+g++ -l ncurses main.cpp bar.cpp menu.cpp textBox.cpp window.cpp collection.cpp fish.cpp -o main.out
 ```
