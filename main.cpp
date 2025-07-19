@@ -15,6 +15,7 @@
 int get_fish_rarity_color(Rarity rarity);
 std::vector<std::string> get_fish_variety_text(FishVariety name);
 std::vector<std::string> get_fish_rarity_text(Rarity rarity);
+std::vector<std::string> get_number_text(int number);
 bool prepare_color();
 std::vector<FishVariety> build_fishing_pool();
 
@@ -92,7 +93,7 @@ int main() {
       MenuButton(5, 12, (y / 6) + 2, (x / 6) + 3,
         [&](GameState& state) {
           state.current_state = Waiting;
-        }, 'r'),
+        }, 'x'),
     }),
     std::vector<TextBox*>({
       new TextBoxCentered(x_text, 5, 12, (y / 6) + 2, (x / 6) + 3)
@@ -264,7 +265,7 @@ int main() {
       }
       break;
 
-    case Caught:
+    case Caught: {
       caught_menu.draw();
 
       TextBoxCentered::draw(get_fish_rarity_text(chosen_fish.get_rarity()),
@@ -272,6 +273,19 @@ int main() {
                             get_fish_rarity_color(chosen_fish.get_rarity()));
       TextBoxCentered::draw(get_fish_variety_text(chosen_fish.get_name()),
                             6, x / 3 * 2, (y / 6) + 12, (x / 6));
+      int size = (100 * chosen_fish.get_min_size());
+      // 46
+      TextBoxCentered::draw(get_number_text(size / 100),
+                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2));
+      TextBoxCentered::draw(period_text,
+                            5, 3, (y / 6) + 20, (x / 2) - (38 / 2) + 8);
+      TextBoxCentered::draw(get_number_text((size / 10) % 10),
+                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2) + 11);
+      TextBoxCentered::draw(get_number_text(size % 10),
+                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2) + 19);
+      TextBoxCentered::draw(m_text,
+                            5, 11, (y / 6) + 20, (x / 2) - (38 / 2) + 27);
+      mvprintw(0, 0, "%d.%dm", size / 100, size % 100);
 
       ch = getch();
       if (caught_menu.handle_input(ch, program_state)) {
@@ -290,13 +304,14 @@ int main() {
         program_state.current_state = Waiting;
         program_state.previous_state = Caught;
         halfdelay(1);
-        chosen_fish = Fish(fishing_pool[(int)(rand() % fishing_pool.size())]);
+        chosen_fish = Fish(fishing_pool[(rand() % fishing_pool.size())]);
         fish_encounter_time = time(NULL) + chosen_fish.get_fish_delay() +
-                              (int)(rand() % chosen_fish.get_random_fish_delay());
+                              (rand() % chosen_fish.get_random_fish_delay());
         caught_menu.clear();
         fishing_bobber_waiting1.draw();
       }
       break;
+    }
 
     case Paused:
       ch = getch();
@@ -391,8 +406,9 @@ std::vector<std::string> get_fish_variety_text(FishVariety name) {
       return eel_text;
     case Octopus:
       return octopus_text;
+    default:
+      return catfish_text;
   }
-  return catfish_text;
 }
 
 std::vector<std::string> get_fish_rarity_text(Rarity rarity) {
@@ -405,8 +421,9 @@ std::vector<std::string> get_fish_rarity_text(Rarity rarity) {
       return rare_text;
     case Legendary:
       return legendary_text;
+    default:
+      return common_text;
   }
-  return common_text;
 }
 
 int get_fish_rarity_color(Rarity rarity) {
@@ -419,6 +436,34 @@ int get_fish_rarity_color(Rarity rarity) {
       return COLOR_PAIR(3);
     case Legendary:
       return COLOR_PAIR(5);
+    default:
+      return 0;
   }
-  return 0;
+}
+
+std::vector<std::string> get_number_text(int number) {
+  switch (number) {
+    case 0:
+      return zero_text;
+    case 1:
+      return one_text;
+    case 2:
+      return two_text;
+    case 3:
+      return three_text;
+    case 4:
+      return four_text;
+    case 5:
+      return five_text;
+    case 6:
+      return six_text;
+    case 7:
+      return seven_text;
+    case 8:
+      return eight_text;
+    case 9:
+      return nine_text;
+    default:
+      return zero_text;
+  }
 }

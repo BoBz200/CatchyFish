@@ -40,6 +40,7 @@ public:
   Rarity get_rarity() const;
   float get_min_size() const;
   float get_max_size() const;
+  float get_size() const;
 
 private:
   FishVariety name;
@@ -60,4 +61,6 @@ private:
   // bounds of fishes size
   float min_size;
   float max_size;
+
+  float size;
 };

@@ -11,6 +11,7 @@ Fish::Fish(FishVariety name, float fishing_power, float fish_strength,
   this->rarity = rarity;
   this->min_size = min_size;
   this->max_size = max_size;
+  this->size = 0;
 }
 
 void Fish::init_rarity(Rarity rarity) {
@@ -47,8 +48,9 @@ void Fish::init_rarity(Rarity rarity) {
 }
 
 void Fish::init_size(float min_size, float max_size) {
-  this->min_size = max_size;
+  this->min_size = min_size;
   this->max_size = max_size;
+  size = min_size +  (rand() % (int)(100 * (max_size - min_size))) / 100.0;
 }
 
 Fish::Fish(FishVariety name) {
@@ -125,4 +127,7 @@ float Fish::get_min_size() const {
 }
 float Fish::get_max_size() const {
   return max_size;
+}
+float Fish::get_size() const {
+  return size;
 }

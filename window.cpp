@@ -31,14 +31,17 @@ bool Window::get_is_boxed() const {
 }
 
 void Window::box(int height, int width, int start_y, int start_x, int color) {
-    mvhline(start_y, start_x + 1, ACS_HLINE | color, width - 2);
-    mvhline(start_y + height - 1, start_x + 1, ACS_HLINE | color, width - 2);
-    mvvline(start_y + 1, start_x, ACS_VLINE | color, height - 2);
-    mvvline(start_y + 1, start_x + width - 1, ACS_VLINE | color, height - 2);
-    mvaddch(start_y, start_x, ACS_ULCORNER | color);
-    mvaddch(start_y + height - 1, start_x, ACS_LLCORNER | color);
-    mvaddch(start_y, start_x + width - 1, ACS_URCORNER | color);
-    mvaddch(start_y + height - 1, start_x + width - 1, ACS_LRCORNER | color);
+  if (has_colors() != true)
+    color = 0;
+
+  mvhline(start_y, start_x + 1, ACS_HLINE | color, width - 2);
+  mvhline(start_y + height - 1, start_x + 1, ACS_HLINE | color, width - 2);
+  mvvline(start_y + 1, start_x, ACS_VLINE | color, height - 2);
+  mvvline(start_y + 1, start_x + width - 1, ACS_VLINE | color, height - 2);
+  mvaddch(start_y, start_x, ACS_ULCORNER | color);
+  mvaddch(start_y + height - 1, start_x, ACS_LLCORNER | color);
+  mvaddch(start_y, start_x + width - 1, ACS_URCORNER | color);
+  mvaddch(start_y + height - 1, start_x + width - 1, ACS_LRCORNER | color);
 }
 
 void Window::box(int height, int width, int start_y, int start_x) {

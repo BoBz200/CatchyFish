@@ -77,11 +77,11 @@ std::vector<std::string> catching_tip_text = {
   "(i)                                ",
   "When the fish is on the hook,",
   "you will see an exclamation mark.",
-  "To catch the fish press 'b' and 'v'",
+  "To reel in the fish press:",
+  "'b' and 'v'",
   "in alternating succession",
-  "",
-  "As you press 'b' and 'v' the bar",
-  "on the left will increase",
+  "As you reel in the fish the bar",
+  "on the left will increase.",
 };
 
 std::vector<std::string> resume_text = {
@@ -311,4 +311,100 @@ std::vector<std::string> octopus_text = {
   "| |_| | (__| || (_) | |_) | |_| \\__ \\",
   " \\___/ \\___|\\__\\___/| .__/ \\__,_|___/",
   "                    |_|              ",
+};
+
+std::vector<std::string> zero_text = {
+"   ___  ",
+"  / _ \\ ",
+" | | | |",
+" | |_| |",
+"  \\___/ ",
+};
+
+std::vector<std::string> one_text = {
+"    _   ",
+"   / |  ",
+"   | |  ",
+"   | |  ",
+"   |_|  ",
+};
+
+std::vector<std::string> two_text = {
+"  ____  ",
+" |___ \\ ",
+"   __) |",
+"  / __/ ",
+" |_____|",
+};
+
+std::vector<std::string> three_text = {
+"  _____ ",
+" |___ / ",
+"   |_ \\ ",
+"  ___) |",
+" |____/ ",
+};
+
+std::vector<std::string> four_text = {
+" _  _   ",
+"| || |  ",
+"| || |_ ",
+"|__   _|",
+"   |_|  ",
+};
+
+std::vector<std::string> five_text = {
+"  ____  ",
+" | ___| ",
+" |___ \\ ",
+"  ___) |",
+" |____/ ",
+};
+
+std::vector<std::string> six_text = {
+"   __   ",
+"  / /_  ",
+" | '_ \\ ",
+" | (_) |",
+"  \\___/ ",
+};
+
+std::vector<std::string> seven_text = {
+"  _____ ",
+" |___  |",
+"    / / ",
+"   / /  ",
+"  /_/   ",
+};
+
+std::vector<std::string> eight_text = {
+"   ___  ",
+"  ( _ ) ",
+"  / _ \\ ",
+" | (_) |",
+"  \\___/ ",
+};
+
+std::vector<std::string> nine_text = {
+"   ___  ",
+"  / _ \\ ",
+" | (_) |",
+"  \\__, |",
+"    /_/ ",
+};
+
+std::vector<std::string> period_text = {
+"",
+"",
+"",
+" _ ",
+"(_)",
+};
+
+std::vector<std::string> m_text = {
+"",
+" _ __ ___  ",
+"| '_ ` _ \\ ",
+"| | | | | |",
+"|_| |_| |_|",
 };
