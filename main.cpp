@@ -45,7 +45,7 @@ int main() {
 
   VerticleProgressBar bar(27, 5, (y / 2) - (27 / 2), x / 13 * 2);
 
-  int button_width = 40;
+  int button_width = 48;
   Menu main_menu(y, x, 0, 0,
     std::vector<MenuButton>({
       MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2), Waiting, 'p'),
@@ -69,7 +69,7 @@ int main() {
     }),
     std::vector<TextBox*>({
       new TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
-      new TextBoxCentered(resume_text, 8, button_width, y / 6 * 2 + 4 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(collection_text, 8, button_width, y / 6 * 2 + 4 + 1, (x / 2) - (button_width / 2)),
       new TextBoxCentered(quit_text, 8, button_width, y / 6 * 4 - 1 + 1, (x / 2) - (button_width / 2)),
     })
   );
