@@ -1,5 +1,6 @@
-#include "fish.h"
 #include <string>
+
+#include "fish.h"
 
 Fish::Fish(FishVariety name, float fishing_power, float fish_strength,
            int fish_delay, int random_fish_delay, Rarity rarity, float min_size,

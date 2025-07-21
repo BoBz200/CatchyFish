@@ -68,7 +68,7 @@ void Menu::draw() const {
 }
 
 // checks if the keypress does something and return true if something happend else false
-bool Menu::handle_input(int input_key, GameState& state) {
+bool Menu::handle_input(int input_key, GameState& game_state) {
 
   if (input_key == KEY_MOUSE) {
     MEVENT event;
@@ -80,7 +80,7 @@ bool Menu::handle_input(int input_key, GameState& state) {
           menu_buttons[selected_button_index].set_is_selected(false);
           menu_button.set_is_selected(true);
           draw();
-          state.current_state = menu_button.get_action();
+          game_state.current_state = menu_button.get_action();
           return true;
         }
       }
@@ -104,14 +104,14 @@ bool Menu::handle_input(int input_key, GameState& state) {
   }
   else if (selected_button_index != -1 && input_key == '\n') {
     // do button action
-    state.current_state = menu_buttons[selected_button_index].get_action();
+    game_state.current_state = menu_buttons[selected_button_index].get_action();
     return true;
   }
   else {
     // check if key corresponds with button then do button action
     for (const MenuButton& menu_button : menu_buttons) {
       if (menu_button.get_key() == input_key) {
-        state.current_state = menu_button.get_action();
+        game_state.current_state = menu_button.get_action();
         return true;
       }
     }
@@ -120,10 +120,42 @@ bool Menu::handle_input(int input_key, GameState& state) {
   return false;
 }
 
-void Menu::reset_buttons() {
+void Menu::reset() {
   if (selected_button_index != -1) {
     menu_buttons[selected_button_index].set_is_selected(false);
     selected_button_index = 0;
     menu_buttons[0].set_is_selected(true);
   }
+}
+
+MenuCollection::MenuCollection(std::vector<Menu*> menus) :
+Menu(*menus[0]), menus(menus), selected_menu_index(0) {}
+
+void MenuCollection::draw() const {
+  menus[selected_menu_index]->clear();
+  menus[selected_menu_index]->draw();
+}
+
+bool MenuCollection::handle_input(int input_key, GameState& game_state) {
+  state prev_state = game_state.current_state;
+  if (menus[selected_menu_index]->handle_input(input_key, game_state)) {
+    if (game_state.current_state == NextMenu) {
+      game_state.current_state = prev_state;
+      menus[selected_menu_index]->reset();
+      selected_menu_index = ++selected_menu_index % menus.size();
+    }
+    if (game_state.current_state == PreviousMenu) {
+      game_state.current_state = prev_state;
+      menus[selected_menu_index]->reset();
+      selected_menu_index = (menus.size() - 1 + selected_menu_index) % menus.size();
+    }
+    return true;
+  }
+  return false;
+}
+
+void MenuCollection::reset() {
+  menus[selected_menu_index]->reset();
+  selected_menu_index = 0;
+  menus[selected_menu_index]->reset();
 }

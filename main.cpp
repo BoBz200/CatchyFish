@@ -19,6 +19,8 @@ std::vector<std::string> get_number_text(int number);
 bool prepare_color();
 std::vector<FishVariety> build_fishing_pool();
 
+using namespace Assets;
+
 int main() {
   initscr();
   srand(time(NULL));
@@ -75,14 +77,62 @@ int main() {
   );
   escape_menu.set_is_boxed(true);
 
-  Menu collection_menu(y, x, 0, 0,
-    std::vector<MenuButton>({
-      MenuButton(5, 12, 2, 3, PreviousState, 'x'),
-    }),
-    std::vector<TextBox*>({
-      new TextBoxCentered(x_text, 5, 12, 2, 3)
+  MenuCollection collection_menu(std::vector<Menu*>({
+      new Menu(y, x, 0, 0,
+        std::vector<MenuButton>({
+          MenuButton(7, 12, 1, 3, PreviousState, 'x'),
+          MenuButton(6, 10, y - 7, x - 13, NextMenu),
+        }),
+        std::vector<TextBox*>({
+          new TextBoxCentered(x_text, 5, 12, 2, 3),
+          new TextBoxCentered(get_fish_rarity_text(Common), 8, 50,
+                              2, x / 2 - (50 / 2), true, get_fish_rarity_color(Common)),
+          new TextBoxCentered(next_arrow_text, 4, 8, y - 6, x - 12),
+        })
+      ),
+      new Menu(y, x, 0, 0,
+        std::vector<MenuButton>({
+          MenuButton(7, 12, 1, 3, PreviousState, 'x'),
+          MenuButton(6, 10, y - 7, 3, PreviousMenu),
+          MenuButton(6, 10, y - 7, x - 13, NextMenu),
+        }),
+        std::vector<TextBox*>({
+          new TextBoxCentered(x_text, 5, 12, 2, 3),
+          new TextBoxCentered(get_fish_rarity_text(Uncommon), 8, 60,
+                              2, x / 2 - (60 / 2), true, get_fish_rarity_color(Uncommon)),
+          new TextBoxCentered(prev_arrow_text, 4, 8, y - 6, 4),
+          new TextBoxCentered(next_arrow_text, 4, 8, y - 6, x - 12),
+        })
+      ),
+      new Menu(y, x, 0, 0,
+        std::vector<MenuButton>({
+          MenuButton(7, 12, 1, 3, PreviousState, 'x'),
+          MenuButton(6, 10, y - 7, 3, PreviousMenu),
+          MenuButton(6, 10, y - 7, x - 13, NextMenu),
+        }),
+        std::vector<TextBox*>({
+          new TextBoxCentered(x_text, 5, 12, 2, 3),
+          new TextBoxCentered(get_fish_rarity_text(Rare), 8, 40,
+                              2, x / 2 - (40 / 2), true, get_fish_rarity_color(Rare)),
+          new TextBoxCentered(prev_arrow_text, 4, 8, y - 6, 4),
+          new TextBoxCentered(next_arrow_text, 4, 8, y - 6, x - 12),
+        })
+      ),
+      new Menu(y, x, 0, 0,
+        std::vector<MenuButton>({
+          MenuButton(7, 12, 1, 3, PreviousState, 'x'),
+          MenuButton(6, 10, y - 7, 3, PreviousMenu),
+        }),
+        std::vector<TextBox*>({
+          new TextBoxCentered(x_text, 5, 12, 2, 3),
+          new TextBoxCentered(get_fish_rarity_text(Legendary), 8, 70,
+                              2, x / 2 - (70 / 2), true, get_fish_rarity_color(Legendary)),
+          new TextBoxCentered(prev_arrow_text, 4, 8, y - 6, 4),
+        })
+      ),
     })
   );
+
   time_t pause_menu_timer = -1;
   Menu* pause_menu = &escape_menu;
 
@@ -351,7 +401,8 @@ int main() {
           }
           pause_menu->clear();
           pause_menu = &escape_menu;
-          escape_menu.reset_buttons();
+          escape_menu.reset();
+          collection_menu.reset();
           mousemask(0, NULL);
           program_state.previous_state = Paused;
       }

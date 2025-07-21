@@ -31,13 +31,27 @@ public:
   Menu(int height, int width, int start_y, int start_x, std::vector<MenuButton> menu_buttons, std::vector<TextBox*> menu_texts);
   ~Menu();
 
-  void draw() const override;
-  bool handle_input(int input_key, GameState& state);
+  virtual void draw() const override;
+  virtual bool handle_input(int input_key, GameState& game_state);
 
-  void reset_buttons();
+  virtual void reset();
 
 private:
   int selected_button_index;
   std::vector<MenuButton> menu_buttons;
   std::vector<TextBox*> menu_texts;
+};
+
+class MenuCollection : public Menu {
+public:
+  MenuCollection(std::vector<Menu*> menus);
+
+  void draw() const override;
+  bool handle_input(int input_key, GameState& game_state) override;
+
+  void reset() override;
+
+private:
+  std::vector<Menu*> menus;
+  int selected_menu_index;
 };
