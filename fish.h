@@ -47,6 +47,7 @@ public:
 private:
   void init_rarity(Rarity rarity);
   void init_size(float min_size, float max_size);
+
   FishVariety name;
 
   // amount bar increases on click

@@ -1,4 +1,3 @@
-#include <functional>
 #include <ncurses.h>
 #include <random>
 #include <ctime>
@@ -49,18 +48,9 @@ int main() {
   int button_width = 40;
   Menu main_menu(y, x, 0, 0,
     std::vector<MenuButton>({
-      MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2),
-        [&](GameState& state) {
-          state.current_state = Waiting;
-        }, 'p'),
-      MenuButton(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2),
-        [&](GameState& state) {
-          state.current_state = TutorialWaiting;
-        }, 't'),
-      MenuButton(9, button_width, y / 9 * 7, (x / 2) - (button_width / 2),
-        [&](GameState& state) {
-          state.current_state = Quit;
-        }, 'q'),
+      MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2), Waiting, 'p'),
+      MenuButton(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2), TutorialWaiting, 't'),
+      MenuButton(9, button_width, y / 9 * 7, (x / 2) - (button_width / 2), Quit, 'q'),
     }),
     std::vector<TextBox*>({
       new TextBoxCentered(play_text, 9, button_width, y / 9 * 3 + 1, (x / 2) - (button_width / 2)),
@@ -73,14 +63,8 @@ int main() {
 
   Menu pause_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
     std::vector<MenuButton>({
-      MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2),
-        [&](GameState& state) {
-          state.current_state = state.previous_state;
-        }, 'r'),
-      MenuButton(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2),
-        [&](GameState& state) {
-          state.current_state = Quit;
-        }, 'q'),
+      MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2), PreviousState, 'r'),
+      MenuButton(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2), Quit, 'q'),
     }),
     std::vector<TextBox*>({
       new TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
@@ -88,13 +72,11 @@ int main() {
     })
   );
   pause_menu.set_is_boxed(true);
+  time_t pause_menu_timer = -1;
 
   Menu caught_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
     std::vector<MenuButton>({
-      MenuButton(5, 12, (y / 6) + 2, (x / 6) + 3,
-        [&](GameState& state) {
-          state.current_state = Waiting;
-        }, 'x'),
+      MenuButton(5, 12, (y / 6) + 2, (x / 6) + 3, Waiting, 'x'),
     }),
     std::vector<TextBox*>({
       new TextBoxCentered(x_text, 5, 12, (y / 6) + 2, (x / 6) + 3)
@@ -159,6 +141,7 @@ int main() {
       if (ch == 27) {
         program_state.previous_state = program_state.current_state;
         program_state.current_state = Paused;
+        pause_menu_timer = time(NULL);
         mousemask(BUTTON1_CLICKED, NULL);
         pause_menu.clear();
         pause_menu.draw();
@@ -332,17 +315,26 @@ int main() {
           pause_menu.draw();
       }
       if (ch == 27) {
-        program_state.current_state = program_state.previous_state;
+        program_state.current_state = PreviousState;
       }
+
       if (program_state.current_state != Paused) {
-          if (program_state.current_state == Waiting || program_state.current_state == Catching ||
-          program_state.current_state == TutorialWaiting || program_state.current_state == TutorialCatching)
-            halfdelay(1);
+          if (program_state.current_state == PreviousState) {
+            program_state.current_state = program_state.previous_state;
+
+            if (program_state.current_state == TutorialWaiting || program_state.current_state == Waiting ||
+                program_state.current_state == TutorialCatching || program_state.current_state == Catching) {
+              if (fish_encounter_time != -1)
+                fish_encounter_time += time(NULL) - pause_menu_timer;
+              halfdelay(1);
+            }
+          }
           mousemask(0, NULL);
           program_state.previous_state = Paused;
           pause_menu.clear();
       }
       break;
+
     case Quit:
       loop = false;
       break;

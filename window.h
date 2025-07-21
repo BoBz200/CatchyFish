@@ -2,8 +2,7 @@
 
 class Window {
 public:
-  Window(int height, int width, int start_y, int start_x, bool is_boxed);
-  Window(int height, int width, int start_y, int start_x);
+  Window(int height, int width, int start_y, int start_x, bool is_boxed = true);
 
   virtual void clear() const;
   virtual void draw() const = 0;
@@ -11,8 +10,7 @@ public:
   void set_is_boxed(bool is_boxed);
   bool get_is_boxed() const;
 
-  static void box(int height, int width, int start_y, int start_x, int color);
-  static void box(int height, int width, int start_y, int start_x);
+  static void box(int height, int width, int start_y, int start_x, int color = 0);
 
 protected:
   int height;
@@ -20,8 +18,7 @@ protected:
   int start_y;
   int start_x;
 
-  void box(int color) const;
-  void box() const;
+  void box(int color = 0) const;
 
 private:
   bool is_boxed;

@@ -9,6 +9,9 @@ enum state {
   Caught,
   Paused,
   Quit,
+  PreviousState,
+  NextMenu,
+  PreviousMenu,
 };
 
 struct GameState {

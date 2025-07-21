@@ -3,9 +3,8 @@
 
 #include "collection.h"
 
-Collection::Collection() {
-  collection = std::vector<Fish>();
-}
+Collection::Collection() :
+collection(std::vector<Fish>()) {}
 
 void Collection::add(Fish new_fish) {
   // if fish is not in collection add it
@@ -93,6 +92,7 @@ void Collection::save_to_file() {
     return;
   }
 
+  // save to file as {fishVariety}, {size}
   for (const Fish& fish : collection) {
     file << fish.get_name() << "," << fish.get_size() << std::endl;
   }

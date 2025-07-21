@@ -8,13 +8,10 @@ ProgressBar(height, width, start_y, start_x) {
 }
 
 ProgressBar::ProgressBar(int height, int width, int start_y, int start_x) :
-Window(height, width, start_y, start_x) {
-  progress = 0;
-
+Window(height, width, start_y, start_x), progress(0) {
   if (has_colors() == false) {
     empty_char = ' ';
     full_char = '#';
-    printw("no color");
   }
   else {
     empty_char = ' ';
@@ -25,6 +22,7 @@ Window(height, width, start_y, start_x) {
 float ProgressBar::get_progress() const {
   return progress;
 }
+
 void ProgressBar::set_progress(float progress) {
   if (progress > 1.0) {
     this->progress = 1;
