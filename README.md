@@ -7,6 +7,10 @@ Try to catch all of them.
 
 This project is my final for cis25.
 
+![mainMenu](assets/mainMenu.png)
+![catching](assets/catching.png)
+![caught](assets/caught.png)
+
 ## Installation
 
 ### Dependencies
