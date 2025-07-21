@@ -128,6 +128,7 @@ int main() {
           new TextBoxCentered(get_fish_rarity_text(Legendary), 8, 70,
                               2, x / 2 - (70 / 2), true, get_fish_rarity_color(Legendary)),
           new TextBoxCentered(prev_arrow_text, 4, 8, y - 6, 4),
+          new TextBoxCentered(next_arrow_text, 4, 8, y - 6, x - 12),
         })
       ),
     })
@@ -403,7 +404,8 @@ int main() {
           pause_menu = &escape_menu;
           escape_menu.reset();
           collection_menu.reset();
-          mousemask(0, NULL);
+          if (program_state.current_state != Caught)
+            mousemask(0, NULL);
           program_state.previous_state = Paused;
       }
       break;

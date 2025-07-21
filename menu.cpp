@@ -137,6 +137,16 @@ void MenuCollection::draw() const {
 }
 
 bool MenuCollection::handle_input(int input_key, GameState& game_state) {
+  if (selected_menu_index != -1 && (input_key == 'h' || input_key == KEY_LEFT)) {
+    menus[selected_menu_index]->reset();
+    selected_menu_index = (menus.size() - 1 + selected_menu_index) % menus.size();
+    return true;
+  }
+  else if (selected_menu_index != -1 && (input_key == 'l' || input_key == KEY_RIGHT)) {
+    menus[selected_menu_index]->reset();
+    selected_menu_index = ++selected_menu_index % menus.size();
+    return true;
+  }
   state prev_state = game_state.current_state;
   if (menus[selected_menu_index]->handle_input(input_key, game_state)) {
     if (game_state.current_state == NextMenu) {
