@@ -8,6 +8,7 @@ enum state {
   Catching,
   Caught,
   Paused,
+  ViewCollection,
   Quit,
   PreviousState,
   NextMenu,

@@ -61,18 +61,30 @@ int main() {
     })
   );
 
-  Menu pause_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
+  Menu escape_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
     std::vector<MenuButton>({
       MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2), PreviousState, 'r'),
+      MenuButton(8, button_width, y / 6 * 2 + 4, (x / 2) - (button_width / 2), ViewCollection, 'v'),
       MenuButton(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2), Quit, 'q'),
     }),
     std::vector<TextBox*>({
       new TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
+      new TextBoxCentered(resume_text, 8, button_width, y / 6 * 2 + 4 + 1, (x / 2) - (button_width / 2)),
       new TextBoxCentered(quit_text, 8, button_width, y / 6 * 4 - 1 + 1, (x / 2) - (button_width / 2)),
     })
   );
-  pause_menu.set_is_boxed(true);
+  escape_menu.set_is_boxed(true);
+
+  Menu collection_menu(y, x, 0, 0,
+    std::vector<MenuButton>({
+      MenuButton(5, 12, 2, 3, PreviousState, 'x'),
+    }),
+    std::vector<TextBox*>({
+      new TextBoxCentered(x_text, 5, 12, 2, 3)
+    })
+  );
   time_t pause_menu_timer = -1;
+  Menu* pause_menu = &escape_menu;
 
   Menu caught_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
     std::vector<MenuButton>({
@@ -143,8 +155,8 @@ int main() {
         program_state.current_state = Paused;
         pause_menu_timer = time(NULL);
         mousemask(BUTTON1_CLICKED, NULL);
-        pause_menu.clear();
-        pause_menu.draw();
+        pause_menu->clear();
+        pause_menu->draw();
         nocbreak();
         cbreak();
         break;
@@ -195,8 +207,8 @@ int main() {
         program_state.previous_state = program_state.current_state;
         program_state.current_state = Paused;
         mousemask(BUTTON1_CLICKED, NULL);
-        pause_menu.clear();
-        pause_menu.draw();
+        pause_menu->clear();
+        pause_menu->draw();
         nocbreak();
         cbreak();
         break;
@@ -286,7 +298,7 @@ int main() {
         program_state.previous_state = Caught;
         mousemask(BUTTON1_CLICKED, NULL);
         caught_menu.clear();
-        pause_menu.draw();
+        pause_menu->draw();
         break;
       }
       if (program_state.current_state != Caught) {
@@ -311,9 +323,17 @@ int main() {
 
     case Paused:
       ch = getch();
-      if (pause_menu.handle_input(ch, program_state)) {
-          pause_menu.draw();
+      if (pause_menu->handle_input(ch, program_state)) {
+          pause_menu->draw();
       }
+      if (program_state.current_state == ViewCollection) {
+        pause_menu->clear();
+        pause_menu = &collection_menu;
+        pause_menu->clear();
+        pause_menu->draw();
+        program_state.current_state = Paused;
+      }
+
       if (ch == 27) {
         program_state.current_state = PreviousState;
       }
@@ -329,9 +349,11 @@ int main() {
               halfdelay(1);
             }
           }
+          pause_menu->clear();
+          pause_menu = &escape_menu;
+          escape_menu.reset_buttons();
           mousemask(0, NULL);
           program_state.previous_state = Paused;
-          pause_menu.clear();
       }
       break;
 

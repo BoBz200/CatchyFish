@@ -119,3 +119,11 @@ bool Menu::handle_input(int input_key, GameState& state) {
 
   return false;
 }
+
+void Menu::reset_buttons() {
+  if (selected_button_index != -1) {
+    menu_buttons[selected_button_index].set_is_selected(false);
+    selected_button_index = 0;
+    menu_buttons[0].set_is_selected(true);
+  }
+}

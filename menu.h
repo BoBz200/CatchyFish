@@ -34,6 +34,8 @@ public:
   void draw() const override;
   bool handle_input(int input_key, GameState& state);
 
+  void reset_buttons();
+
 private:
   int selected_button_index;
   std::vector<MenuButton> menu_buttons;
