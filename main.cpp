@@ -12,25 +12,26 @@
 #include "fish.h"
 #include "collection.h"
 
-int get_fish_rarity_color(Rarity rarity);
-std::vector<std::string> get_fish_variety_text(FishVariety name);
-std::vector<std::string> get_fish_rarity_text(Rarity rarity);
-
-std::vector<std::string> get_number_text(int number);
-void draw_fish_size(float size, int start_y, int start_x, int color = 0);
-
 bool prepare_color();
 std::vector<FishVariety> build_fishing_pool();
+int get_fish_rarity_color(Rarity rarity);
+const std::vector<std::string>& get_fish_variety_text(FishVariety name);
+const std::vector<std::string>& get_fish_rarity_text(Rarity rarity);
+const std::vector<std::string>& get_number_text(int number);
+void draw_fish_size(float size, int start_y, int start_x, int color = 0);
 
-using namespace Assets;
 
 int main() {
+  using namespace Assets;
+
+  // init screen
   initscr();
   srand(time(NULL));
 
   int y, x;
   getmaxyx(stdscr, y, x);
 
+  // if terminal is too small for text assests
   if (y < 45 || x < 170) {
     endwin();
     std::cout << "Your terminal is not big enough.\nPlease increase the window or reduce the text size." << std::endl;
@@ -38,24 +39,27 @@ int main() {
   }
 
   prepare_color();
-  keypad(stdscr, TRUE);
-  mousemask(BUTTON1_CLICKED, NULL);
-  curs_set(0);
-  noecho();
-  set_escdelay(0);
+  keypad(stdscr, TRUE); // allow reading arrow keys
+  mousemask(BUTTON1_CLICKED, NULL); // allow mouse click
+  curs_set(0); // hide cursor
+  noecho(); // keypersses are not echoed
+  set_escdelay(0); // remove escape delay
+  const int ESC = 27;
 
   GameState program_state;
   program_state.current_state = MainMenu;
   program_state.previous_state = MainMenu;
 
+  //catching progress bar
   VerticleProgressBar bar(27, 5, (y / 2) - (27 / 2), x / 13 * 2);
 
+  // init menus
   int button_width = 48;
   Menu main_menu(y, x, 0, 0,
     std::vector<MenuButton>({
-      MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2), Waiting, 'p'),
-      MenuButton(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2), TutorialWaiting, 't'),
-      MenuButton(9, button_width, y / 9 * 7, (x / 2) - (button_width / 2), Quit, 'q'),
+      MenuButton(9, button_width, y / 9 * 3, (x / 2) - (button_width / 2), Waiting),
+      MenuButton(9, button_width, y / 9 * 5, (x / 2) - (button_width / 2), TutorialWaiting),
+      MenuButton(9, button_width, y / 9 * 7, (x / 2) - (button_width / 2), Quit),
     }),
     std::vector<TextBox*>({
       new TextBoxCentered(play_text, 9, button_width, y / 9 * 3 + 1, (x / 2) - (button_width / 2)),
@@ -68,9 +72,9 @@ int main() {
 
   Menu escape_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
     std::vector<MenuButton>({
-      MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2), PreviousState, 'r'),
-      MenuButton(8, button_width, y / 6 * 2 + 4, (x / 2) - (button_width / 2), ViewCollection, 'v'),
-      MenuButton(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2), Quit, 'q'),
+      MenuButton(8, button_width, y / 6 + 2, (x / 2) - (button_width / 2), PreviousState),
+      MenuButton(8, button_width, y / 6 * 2 + 4, (x / 2) - (button_width / 2), ViewCollection),
+      MenuButton(8, button_width, y / 6 * 4 - 1, (x / 2) - (button_width / 2), Quit),
     }),
     std::vector<TextBox*>({
       new TextBoxCentered(resume_text, 8, button_width, y / 6 + 2 + 1, (x / 2) - (button_width / 2)),
@@ -135,9 +139,8 @@ int main() {
       ),
     })
   );
-
-  time_t pause_menu_timer = -1;
   Menu* pause_menu = &escape_menu;
+  time_t pause_menu_timer = -1;
 
   Menu caught_menu(y / 3 * 2, x / 3 * 2, (y / 6), (x / 6),
     std::vector<MenuButton>({
@@ -149,6 +152,7 @@ int main() {
   );
   caught_menu.set_is_boxed(true);
 
+  // draw first thing on screen
   main_menu.draw();
   refresh();
 
@@ -164,6 +168,7 @@ int main() {
   Collection collection = Collection();
   collection.load_from_file();
 
+  // init text boxes
   TextBoxCentered b_pressed(b_button_pressed, 10, 15, y / 6 * 5, x / 2);
   TextBoxCentered b(b_button, 10, 15, y / 6 * 5, x / 2);
   TextBoxCentered v_pressed(v_button_pressed, 10, 15, y / 6 * 5, x / 2 - 15);
@@ -179,21 +184,25 @@ int main() {
 
     switch (program_state.current_state) {
     case MainMenu:
-      ch = getch();
+      ch = getch(); // read key pressed
+      // if menu changed
       if (main_menu.handle_input(ch, program_state)) {
           main_menu.draw();
       }
+
+      // if state has changed
       if (program_state.current_state != MainMenu) {
-          mousemask(0, NULL);
+          mousemask(0, NULL); // disable mouse reading
           main_menu.clear();
 
           if (program_state.current_state == Waiting || program_state.current_state == TutorialWaiting) {
             if (program_state.current_state == TutorialWaiting)
+              // tutorial has a set fish encounter time
               fish_encounter_time = time(NULL) + 15;
             else
               fish_encounter_time = time(NULL) + chosen_fish.get_fish_delay() +
                                     (int)(rand() % chosen_fish.get_random_fish_delay());
-            halfdelay(1);
+            halfdelay(1); // make getch() wait 1/10sec if nothing happens return ERR
           }
       }
       break;
@@ -203,19 +212,20 @@ int main() {
 
     case Waiting:
       ch = getch();
-      if (ch == 27) {
+      if (ch == ESC) {
         program_state.previous_state = program_state.current_state;
         program_state.current_state = Paused;
         pause_menu_timer = time(NULL);
-        mousemask(BUTTON1_CLICKED, NULL);
+        mousemask(BUTTON1_CLICKED, NULL); // enable mouse reading
         pause_menu->clear();
         pause_menu->draw();
-        nocbreak();
-        cbreak();
+        nocbreak(); // disable halfdelay(1)
+        cbreak();   //
         break;
       }
 
 
+      // switch animation frames
       if (time(NULL) % 3 == 0 && can_switch) {
         waiting_animation_switch = !waiting_animation_switch;
         can_switch = false;
@@ -223,6 +233,7 @@ int main() {
       if (!can_switch && time(NULL) % 3 == 1)
         can_switch = true;
 
+      // draw frame
       if (waiting_animation_switch) {
         fishing_bobber_waiting2.clear();
         fishing_bobber_waiting1.draw();
@@ -232,8 +243,9 @@ int main() {
         fishing_bobber_waiting2.draw();
       }
 
+      // if fish encounter time is up
       if (fish_encounter_time <= time(NULL)) {
-        fish_encounter_time = -1; 
+        fish_encounter_time = -1; // -1 means catching fish or caught
         bar.set_progress(0);
         if (program_state.current_state == TutorialWaiting) {
           clear();
@@ -256,7 +268,7 @@ int main() {
 
     case Catching:
       ch = getch();
-      if (ch == 27) {
+      if (ch == ESC) {
         program_state.previous_state = program_state.current_state;
         program_state.current_state = Paused;
         mousemask(BUTTON1_CLICKED, NULL);
@@ -267,6 +279,7 @@ int main() {
         break;
       }
 
+      // update bar
       if (ch == 'b' && alternating_game_key != 'b') {
         bar.set_progress(bar.get_progress() + chosen_fish.get_fishing_power());
         alternating_game_key = 'b';
@@ -279,6 +292,7 @@ int main() {
         bar.set_progress(bar.get_progress() - chosen_fish.get_fish_strength());
       }
 
+      // draw
       catching_fish_indicator.draw();
       fishing_bobber_catching.draw();
       if (alternating_game_key != ' ') {
@@ -297,12 +311,13 @@ int main() {
         v_pressed.draw();
       }
       else {
-          v_pressed.clear();
-          b_pressed.clear();
-          v.draw();
-          b.draw();
+        v_pressed.clear();
+        b_pressed.clear();
+        v.draw();
+        b.draw();
       }
 
+      // if fish is caught
       if (bar.get_progress() >= 1) {
         clear();
         program_state.current_state = Caught;
@@ -317,8 +332,8 @@ int main() {
       break;
 
     case Caught:
+      // draw
       caught_menu.draw();
-
       TextBoxCentered::draw(get_fish_rarity_text(chosen_fish.get_rarity()),
                             6, x / 3 * 2, (y / 6) + 1, (x / 6),
                             get_fish_rarity_color(chosen_fish.get_rarity()));
@@ -335,7 +350,7 @@ int main() {
       if (caught_menu.handle_input(ch, program_state)) {
           caught_menu.draw();
       }
-      if (ch == 27) {
+      if (ch == ESC) {
         program_state.current_state = Paused;
         program_state.previous_state = Caught;
         mousemask(BUTTON1_CLICKED, NULL);
@@ -343,6 +358,8 @@ int main() {
         pause_menu->draw();
         break;
       }
+
+      // if state has changed
       if (program_state.current_state != Caught) {
         mousemask(0, NULL);
         program_state.current_state = Waiting;
@@ -354,6 +371,7 @@ int main() {
             collection.save_to_file();
         }
 
+        // create next fish to catch
         chosen_fish = Fish(fishing_pool[(rand() % fishing_pool.size())]);
         fish_encounter_time = time(NULL) + chosen_fish.get_fish_delay() +
                               (rand() % chosen_fish.get_random_fish_delay());
@@ -362,7 +380,8 @@ int main() {
       }
       break;
 
-    case PausedViewCollection:
+    case PausedViewCollection: // draws the Collection menu
+      // if viewing common fish
       if (collection_menu.get_selected_menu_index() == 0) {
         TextBoxCentered::draw(collection.is_fish_inside(Catfish) ?
                               get_fish_variety_text(Catfish) : unknown_fish_text,
@@ -396,20 +415,23 @@ int main() {
 
       }
 
+      // if viewing uncommon fish
       if (collection_menu.get_selected_menu_index() == 1) {
         TextBoxCentered::draw(collection.is_fish_inside(Salmon) ?
                               get_fish_variety_text(Salmon) : unknown_fish_text,
                               8, 38, (y / 6) + 12, (x / 2 * 0) + (x / 4) - (38 / 2));
           if (collection.is_fish_inside(Salmon))
-            draw_fish_size(collection.get_fish_size(Salmon), (y / 6) + 22, (x / 4 * 0) + (x / 4) - (35 / 2));
+            draw_fish_size(collection.get_fish_size(Salmon), (y / 6) + 22, (x / 2 * 0) + (x / 4) - (35 / 2));
 
         TextBoxCentered::draw(collection.is_fish_inside(Crawfish) ?
                               get_fish_variety_text(Crawfish) : unknown_fish_text,
                               8, 42, (y / 6) + 12, (x / 2 * 1) + (x / 4) - (42 / 2));
           if (collection.is_fish_inside(Crawfish))
-            draw_fish_size(collection.get_fish_size(Crawfish), (y / 6) + 22, (x / 4 * 1) + (x / 4) - (35 / 2));
+            draw_fish_size(collection.get_fish_size(Crawfish), (y / 6) + 22, (x / 2 * 1) + (x / 4) - (35 / 2));
 
       }
+
+      // if rare
       if (collection_menu.get_selected_menu_index() == 2) {
         TextBoxCentered::draw(collection.is_fish_inside(Eel) ?
                               get_fish_variety_text(Eel) : unknown_fish_text,
@@ -418,6 +440,8 @@ int main() {
             draw_fish_size(collection.get_fish_size(Eel), (y / 6) + 22, (x / 1 * 0) + (x / 2) - (35 / 2));
 
       }
+
+      // if legendary
       if (collection_menu.get_selected_menu_index() == 3) {
         TextBoxCentered::draw(collection.is_fish_inside(Octopus) ?
                               get_fish_variety_text(Octopus) : unknown_fish_text,
@@ -432,6 +456,7 @@ int main() {
       if (pause_menu->handle_input(ch, program_state)) {
           pause_menu->draw();
       }
+      // if user clicked collection button
       if (program_state.current_state == ViewCollection) {
         pause_menu->clear();
         pause_menu = &collection_menu;
@@ -439,7 +464,7 @@ int main() {
         program_state.current_state = PausedViewCollection;
       }
 
-      if (ch == 27) {
+      if (ch == ESC) {
         program_state.current_state = PreviousState;
       }
 
@@ -454,10 +479,10 @@ int main() {
               halfdelay(1);
             }
           }
-          pause_menu->clear();
-          pause_menu = &escape_menu;
-          escape_menu.reset();
-          collection_menu.reset();
+          pause_menu->clear();      //reset pause menu
+          pause_menu = &escape_menu;//
+          escape_menu.reset();      //
+          collection_menu.reset();  //
           if (program_state.current_state != Caught)
             mousemask(0, NULL);
           program_state.previous_state = Paused;
@@ -481,6 +506,8 @@ int main() {
   return 0;
 }
 
+// init colors for game if possible
+// returns true if succeed else false
 bool prepare_color() {
   if (has_colors() == false)
     return false;
@@ -520,7 +547,9 @@ std::vector<FishVariety> build_fishing_pool() {
   return pool;
 }
 
-std::vector<std::string> get_fish_variety_text(FishVariety name) {
+const std::vector<std::string>& get_fish_variety_text(FishVariety name) {
+  using namespace Assets;
+
   switch (name) {
     case Catfish:
       return catfish_text;
@@ -545,7 +574,9 @@ std::vector<std::string> get_fish_variety_text(FishVariety name) {
   }
 }
 
-std::vector<std::string> get_fish_rarity_text(Rarity rarity) {
+const std::vector<std::string>& get_fish_rarity_text(Rarity rarity) {
+  using namespace Assets;
+
   switch (rarity) {
     case Common:
       return common_text;
@@ -578,7 +609,9 @@ int get_fish_rarity_color(Rarity rarity) {
   }
 }
 
-std::vector<std::string> get_number_text(int number) {
+const std::vector<std::string>& get_number_text(int number) {
+  using namespace Assets;
+
   switch (number) {
     case 0:
       return zero_text;
@@ -606,6 +639,8 @@ std::vector<std::string> get_number_text(int number) {
 }
 
 void draw_fish_size(float size, int start_y, int start_x, int color) {
+  using namespace Assets;
+
   int size_in_cm = (100 * size);
   TextBoxCentered::draw(get_number_text(size_in_cm / 100), 5, 8, start_y, start_x, color);
   TextBoxCentered::draw(period_text, 5, 3, start_y, start_x + 8, color);

@@ -5,7 +5,7 @@
 
 namespace Assets {
 
-  std::vector<std::string> quit_text = {
+  const std::vector<std::string> quit_text = {
     "  ___        _ _   ",
     " / _ \\ _   _(_) |_ ",
     "| | | | | | | | __|",
@@ -13,7 +13,7 @@ namespace Assets {
     " \\__\\_\\\\__,_|_|\\__|",
   };
 
-  std::vector<std::string> play_text = {
+  const std::vector<std::string> play_text = {
     " ____  _             ",
     "|  _ \\| | __ _ _   _ ",
     "| |_) | |/ _` | | | |",
@@ -22,7 +22,7 @@ namespace Assets {
     "                |___/",
   };
 
-  std::vector<std::string> title_text = {
+  const std::vector<std::string> title_text = {
   "  ____      _       _             _____ _     _     ",
   " / ___|__ _| |_ ___| |__  _   _  |  ___(_)___| |__  ",
   "| |   / _` | __/ __| '_ \\| | | | | |_  | / __| '_ \\ ",
@@ -31,7 +31,7 @@ namespace Assets {
   "                          |___/                     ",
   };
 
-  std::vector<std::string> title_text2x = {
+  const std::vector<std::string> title_text2x = {
   "    ________            __              __                          __________  __          __         ",
   "   /        |          |  |            |  |                        |          |/  \\        |  |        ",
   "  /   ______| ____  __ |  | __  ______ |  | ____    __      __     |   _______|\\__/ ______ |  | ____   ",
@@ -45,7 +45,7 @@ namespace Assets {
   "                                                     \\_______/                                         ",
   };
 
-  std::vector<std::string> tutorial_text = {
+  const std::vector<std::string> tutorial_text = {
   " _____      _             _       _ ",
   "|_   _|   _| |_ ___  _ __(_) __ _| |",
   "  | || | | | __/ _ \\| '__| |/ _` | |",
@@ -53,7 +53,7 @@ namespace Assets {
   "  |_| \\__,_|\\__\\___/|_|  |_|\\__,_|_|",
   };
 
-  std::vector<std::string> navigation_tip_text = {
+  const std::vector<std::string> navigation_tip_text = {
     "(i)                                ",
     "Ways to navigate menus:",
     "[ Mouse ]",
@@ -64,7 +64,7 @@ namespace Assets {
     " [ j k ] ",
   };
 
-  std::vector<std::string> waiting_tip_text = {
+  const std::vector<std::string> waiting_tip_text = {
     "(i)                                ",
     "While waiting for a fish",
     "the bobber will float up and down",
@@ -76,7 +76,7 @@ namespace Assets {
     "quit or view your collection",
   };
 
-  std::vector<std::string> catching_tip_text = {
+  const std::vector<std::string> catching_tip_text = {
     "(i)                                ",
     "When the fish is on the hook,",
     "you will see an exclamation mark.",
@@ -87,7 +87,7 @@ namespace Assets {
     "on the left will increase.",
   };
 
-  std::vector<std::string> resume_text = {
+  const std::vector<std::string> resume_text = {
   " ____                               ",
   "|  _ \\ ___  ___ _   _ _ __ ___   ___",
   "| |_) / _ \\/ __| | | | '_ ` _ \\ / _ \\",
@@ -95,7 +95,7 @@ namespace Assets {
   "|_| \\_\\___||___/\\__,_|_| |_| |_|\\___|",
   };
 
-  std::vector<std::string> collection_text = {
+  const std::vector<std::string> collection_text = {
   "  ____      _ _           _   _             ",
   " / ___|___ | | | ___  ___| |_(_) ___  _ __  ",
   "| |   / _ \\| | |/ _ \\/ __| __| |/ _ \\| '_ \\ ",
@@ -103,7 +103,7 @@ namespace Assets {
   " \\____\\___/|_|_|\\___|\\___|\\__|_|\\___/|_| |_|",
   };
 
-  std::vector<std::string> b_button = {
+  const std::vector<std::string> b_button = {
     " __________   ",
     "|   _      |\\ ",
     "|  | |__   | |",
@@ -114,7 +114,7 @@ namespace Assets {
     "\\___________\\|",
   };
 
-  std::vector<std::string> b_button_pressed = {
+  const std::vector<std::string> b_button_pressed = {
     "  __________  ",
     " |   _      |`",
     " |  | |__   ||",
@@ -125,7 +125,7 @@ namespace Assets {
     " `-----------`",
   };
 
-  std::vector<std::string> v_button = {
+  const std::vector<std::string> v_button = {
     " __________   ",
     "|          |\\ ",
     "| __   __  | |",
@@ -136,7 +136,7 @@ namespace Assets {
     "\\___________\\|",
   };
 
-  std::vector<std::string> v_button_pressed = {
+  const std::vector<std::string> v_button_pressed = {
     "  __________  ",
     " |          |`",
     " | __   __  ||",
@@ -147,7 +147,7 @@ namespace Assets {
     " `-----------`",
   };
 
-  std::vector<std::string> bobber1 = {
+  const std::vector<std::string> bobber1 = {
     "            `              ",
     "                           ",
     "            `              ",
@@ -164,7 +164,7 @@ namespace Assets {
   };
 
 
-  std::vector<std::string> bobber2 = {
+  const std::vector<std::string> bobber2 = {
     "            `              ",
     "                           ",
     "            `              ",
@@ -180,7 +180,7 @@ namespace Assets {
     "         '--   ' --        ",
   };
 
-  std::vector<std::string> bobber3 = {
+  const std::vector<std::string> bobber3 = {
     "            `             ",
     "                          ",
     "            `             ",
@@ -196,7 +196,7 @@ namespace Assets {
     "        ; --    ;--       ",
   };
 
-  std::vector<std::string> exclamation_mark = {
+  const std::vector<std::string> exclamation_mark = {
     "  __  ",
     " |  | ",
     " |  | ",
@@ -210,14 +210,14 @@ namespace Assets {
   };
 
 
-  std::vector<std::string> x_text = {
+  const std::vector<std::string> x_text = {
     "__  __",
     "\\ \\/ /",
     " >  < ",
     "/_/\\_\\",
   };
 
-  std::vector<std::string> common_text = {
+  const std::vector<std::string> common_text = {
     "  ____                                      ",
     " / ___|___  _ __ ___  _ __ ___   ___  _ __  ",
     "| |   / _ \\| '_ ` _ \\| '_ ` _ \\ / _ \\| '_ \\ ",
@@ -225,7 +225,7 @@ namespace Assets {
     " \\____\\___/|_| |_| |_|_| |_| |_|\\___/|_| |_|",
   };
 
-  std::vector<std::string> uncommon_text = {
+  const std::vector<std::string> uncommon_text = {
     " _   _                                                 ",
     "| | | |_ __   ___ ___  _ __ ___  _ __ ___   ___  _ __  ",
     "| | | | '_ \\ / __/ _ \\| '_ ` _ \\| '_ ` _ \\ / _ \\| '_ \\ ",
@@ -233,7 +233,7 @@ namespace Assets {
     " \\___/|_| |_|\\___\\___/|_| |_| |_|_| |_| |_|\\___/|_| |_|",
   };
 
-  std::vector<std::string> rare_text = {
+  const std::vector<std::string> rare_text = {
     " ____                ",
     "|  _ \\ __ _ _ __ ___ ",
     "| |_) / _` | '__/ _ \\",
@@ -241,7 +241,7 @@ namespace Assets {
     "|_| \\_\\__,_|_|  \\___|",
   };
 
-  std::vector<std::string> legendary_text = {
+  const std::vector<std::string> legendary_text = {
     " _                              _                  ",
     "| |    ___  __ _  ___ _ __   __| | __ _ _ __ _   _ ",
     "| |   / _ \\/ _` |/ _ \\ '_ \\ / _` |/ _` | '__| | | |",
@@ -250,7 +250,7 @@ namespace Assets {
     "           |___/                             |___/ ",
   };
 
-  std::vector<std::string> catfish_text = {
+  const std::vector<std::string> catfish_text = {
     "  ____      _    __ _     _     ",
     " / ___|__ _| |_ / _(_)___| |__  ",
     "| |   / _` | __| |_| / __| '_ \\ ",
@@ -258,7 +258,7 @@ namespace Assets {
     " \\____\\__,_|\\__|_| |_|___/_| |_|",
   };
 
-  std::vector<std::string> bass_text = {
+  const std::vector<std::string> bass_text = {
     " ____                ",
     "| __ )  __ _ ___ ___ ",
     "|  _ \\ / _` / __/ __|",
@@ -266,7 +266,7 @@ namespace Assets {
     "|____/ \\__,_|___/___/",
   };
 
-  std::vector<std::string> cod_text = {
+  const std::vector<std::string> cod_text = {
     "  ____          _ ",
     " / ___|___   __| |",
     "| |   / _ \\ / _` |",
@@ -274,7 +274,7 @@ namespace Assets {
     " \\____\\___/ \\__,_|",
   };
 
-  std::vector<std::string> trout_text = {
+  const std::vector<std::string> trout_text = {
     " _____                _   ",
     "|_   _| __ ___  _   _| |_ ",
     "  | || '__/ _ \\| | | | __|",
@@ -282,7 +282,7 @@ namespace Assets {
     "  |_||_|  \\___/ \\__,_|\\__|",
   };
 
-  std::vector<std::string> bluegill_text = {
+  const std::vector<std::string> bluegill_text = {
     " ____  _                  _ _ _ ",
     "| __ )| |_   _  ___  __ _(_) | |",
     "|  _ \\| | | | |/ _ \\/ _` | | | |",
@@ -291,7 +291,7 @@ namespace Assets {
     "                    |___/       ",
   };
 
-  std::vector<std::string> salmon_text = {
+  const std::vector<std::string> salmon_text = {
     " ____        _                       ",
     "/ ___|  __ _| |_ __ ___   ___  _ __  ",
     "\\___ \\ / _` | | '_ ` _ \\ / _ \\| '_ \\ ",
@@ -299,7 +299,7 @@ namespace Assets {
     "|____/ \\__,_|_|_| |_| |_|\\___/|_| |_|",
   };
 
-  std::vector<std::string> crawfish_text = {
+  const std::vector<std::string> crawfish_text = {
     "  ____                     __ _     _     ",
     " / ___|_ __ __ ___      __/ _(_)___| |__  ",
     "| |   | '__/ _` \\ \\ /\\ / / |_| / __| '_ \\ ",
@@ -307,7 +307,7 @@ namespace Assets {
     " \\____|_|  \\__,_| \\_/\\_/ |_| |_|___/_| |_|",
   };
 
-  std::vector<std::string> eel_text = {
+  const std::vector<std::string> eel_text = {
     " _____     _ ",
     "| ____|___| |",
     "|  _| / _ \\ |",
@@ -315,7 +315,7 @@ namespace Assets {
     "|_____\\___|_|",
   };
 
-  std::vector<std::string> octopus_text = {
+  const std::vector<std::string> octopus_text = {
     "  ___       _                        ",
     " / _ \\  ___| |_ ___  _ __  _   _ ___ ",
     "| | | |/ __| __/ _ \\| '_ \\| | | / __|",
@@ -324,7 +324,7 @@ namespace Assets {
     "                    |_|              ",
   };
 
-  std::vector<std::string> unknown_fish_text = {
+  const std::vector<std::string> unknown_fish_text = {
   " ___ ___ ___ ",
   "|__ \\__ \\__ \\",
   "  / / / / / /",
@@ -332,7 +332,7 @@ namespace Assets {
   " (_) (_) (_) ",
   };
 
-  std::vector<std::string> zero_text = {
+  const std::vector<std::string> zero_text = {
   "   ___  ",
   "  / _ \\ ",
   " | | | |",
@@ -340,7 +340,7 @@ namespace Assets {
   "  \\___/ ",
   };
 
-  std::vector<std::string> one_text = {
+  const std::vector<std::string> one_text = {
   "    _   ",
   "   / |  ",
   "   | |  ",
@@ -348,7 +348,7 @@ namespace Assets {
   "   |_|  ",
   };
 
-  std::vector<std::string> two_text = {
+  const std::vector<std::string> two_text = {
   "  ____  ",
   " |___ \\ ",
   "   __) |",
@@ -356,7 +356,7 @@ namespace Assets {
   " |_____|",
   };
 
-  std::vector<std::string> three_text = {
+  const std::vector<std::string> three_text = {
   "  _____ ",
   " |___ / ",
   "   |_ \\ ",
@@ -364,7 +364,7 @@ namespace Assets {
   " |____/ ",
   };
 
-  std::vector<std::string> four_text = {
+  const std::vector<std::string> four_text = {
   " _  _   ",
   "| || |  ",
   "| || |_ ",
@@ -372,7 +372,7 @@ namespace Assets {
   "   |_|  ",
   };
 
-  std::vector<std::string> five_text = {
+  const std::vector<std::string> five_text = {
   "  ____  ",
   " | ___| ",
   " |___ \\ ",
@@ -380,7 +380,7 @@ namespace Assets {
   " |____/ ",
   };
 
-  std::vector<std::string> six_text = {
+  const std::vector<std::string> six_text = {
   "   __   ",
   "  / /_  ",
   " | '_ \\ ",
@@ -388,7 +388,7 @@ namespace Assets {
   "  \\___/ ",
   };
 
-  std::vector<std::string> seven_text = {
+  const std::vector<std::string> seven_text = {
   "  _____ ",
   " |___  |",
   "    / / ",
@@ -396,7 +396,7 @@ namespace Assets {
   "  /_/   ",
   };
 
-  std::vector<std::string> eight_text = {
+  const std::vector<std::string> eight_text = {
   "   ___  ",
   "  ( _ ) ",
   "  / _ \\ ",
@@ -404,7 +404,7 @@ namespace Assets {
   "  \\___/ ",
   };
 
-  std::vector<std::string> nine_text = {
+  const std::vector<std::string> nine_text = {
   "   ___  ",
   "  / _ \\ ",
   " | (_) |",
@@ -412,7 +412,7 @@ namespace Assets {
   "    /_/ ",
   };
 
-  std::vector<std::string> period_text = {
+  const std::vector<std::string> period_text = {
   "",
   "",
   "",
@@ -420,7 +420,7 @@ namespace Assets {
   "(_)",
   };
 
-  std::vector<std::string> m_text = {
+  const std::vector<std::string> m_text = {
   "",
   " _ __ ___  ",
   "| '_ ` _ \\ ",
@@ -428,21 +428,21 @@ namespace Assets {
   "|_| |_| |_|",
   };
 
-  std::vector<std::string> new_text = {
+  const std::vector<std::string> new_text = {
   " _ __   _____      __",
   "| '_ \\ / _ \\ \\ /\\ / /",
   "| | | |  __/\\ V  V / ",
   "|_| |_|\\___| \\_/\\_/  ",
   };
 
-  std::vector<std::string> next_arrow_text = {
+  const std::vector<std::string> next_arrow_text = {
   " ____|\\ ",
   "|      \\",
   "|____  /",
   "     |/ ",
   };
 
-  std::vector<std::string> prev_arrow_text = {
+  const std::vector<std::string> prev_arrow_text = {
   " /|____ ",
   "/      |",
   "\\  ____|",
