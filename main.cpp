@@ -128,7 +128,6 @@ int main() {
           new TextBoxCentered(get_fish_rarity_text(Legendary), 8, 70,
                               2, x / 2 - (70 / 2), true, get_fish_rarity_color(Legendary)),
           new TextBoxCentered(prev_arrow_text, 4, 8, y - 6, 4),
-          new TextBoxCentered(next_arrow_text, 4, 8, y - 6, x - 12),
         })
       ),
     })
@@ -329,15 +328,15 @@ int main() {
       int size = (100 * chosen_fish.get_size());
       int color = collection.is_fish_bigger(chosen_fish) ? COLOR_PAIR(4) : 0;
       TextBoxCentered::draw(get_number_text(size / 100),
-                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2), color);
+                            5, 8, (y / 6) + 20, (x / 2) - (35 / 2), color);
       TextBoxCentered::draw(period_text,
-                            5, 3, (y / 6) + 20, (x / 2) - (38 / 2) + 8, color);
+                            5, 3, (y / 6) + 20, (x / 2) - (35 / 2) + 8, color);
       TextBoxCentered::draw(get_number_text((size / 10) % 10),
-                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2) + 11, color);
+                            5, 8, (y / 6) + 20, (x / 2) - (35 / 2) + 10, color);
       TextBoxCentered::draw(get_number_text(size % 10),
-                            5, 8, (y / 6) + 20, (x / 2) - (38 / 2) + 19, color);
+                            5, 8, (y / 6) + 20, (x / 2) - (35 / 2) + 16, color);
       TextBoxCentered::draw(m_text,
-                            5, 11, (y / 6) + 20, (x / 2) - (38 / 2) + 27, color);
+                            5, 11, (y / 6) + 20, (x / 2) - (35 / 2) + 24, color);
       // mvprintw(0, 0, "%d.%dm", size / 100, size % 100);
 
       ch = getch();
@@ -372,6 +371,43 @@ int main() {
       break;
     }
 
+    case PausedViewCollection:
+      if (collection_menu.get_selected_menu_index() == 0) {
+        TextBoxCentered::draw(collection.is_fish_inside(Catfish) ?
+                              get_fish_variety_text(Catfish) : unknown_fish_text,
+                              8, 34, (y / 6) + 12, (x / 5 * 0) + (x / 10) - (34 / 2));
+        TextBoxCentered::draw(collection.is_fish_inside(Bass) ?
+                              get_fish_variety_text(Bass) : unknown_fish_text,
+                              8, 24, (y / 6) + 12, (x / 5 * 1) + (x / 10) - (24 / 2));
+        TextBoxCentered::draw(collection.is_fish_inside(Cod) ?
+                              get_fish_variety_text(Cod) : unknown_fish_text,
+                              8, 24, (y / 6) + 12, (x / 5 * 2) + (x / 10) - (24 / 2));
+        TextBoxCentered::draw(collection.is_fish_inside(Trout) ?
+                              get_fish_variety_text(Trout) : unknown_fish_text,
+                              8, 28, (y / 6) + 12, (x / 5 * 3) + (x / 10) - (28 / 2));
+        TextBoxCentered::draw(collection.is_fish_inside(Bluegill) ?
+                              get_fish_variety_text(Bluegill) : unknown_fish_text,
+                              8, 32, (y / 6) + 12, (x / 5 * 4) + (x / 10) - (32 / 2));
+      }
+      if (collection_menu.get_selected_menu_index() == 1) {
+        TextBoxCentered::draw(collection.is_fish_inside(Salmon) ?
+                              get_fish_variety_text(Salmon) : unknown_fish_text,
+                              8, 38, (y / 6) + 12, (x / 2 * 0) + (x / 4) - (38 / 2));
+        TextBoxCentered::draw(collection.is_fish_inside(Crawfish) ?
+                              get_fish_variety_text(Crawfish) : unknown_fish_text,
+                              8, 42, (y / 6) + 12, (x / 2 * 1) + (x / 4) - (42 / 2));
+      }
+      if (collection_menu.get_selected_menu_index() == 2) {
+        TextBoxCentered::draw(collection.is_fish_inside(Eel) ?
+                              get_fish_variety_text(Eel) : unknown_fish_text,
+                              8, 20, (y / 6) + 12, (x / 1 * 0) + (x / 2) - (20 / 2));
+      }
+      if (collection_menu.get_selected_menu_index() == 3) {
+        TextBoxCentered::draw(collection.is_fish_inside(Octopus) ?
+                              get_fish_variety_text(Octopus) : unknown_fish_text,
+                              8, 38, (y / 6) + 12, (x / 1 * 0) + (x / 2) - (38 / 2));
+      }
+
     case Paused:
       ch = getch();
       if (pause_menu->handle_input(ch, program_state)) {
@@ -380,16 +416,15 @@ int main() {
       if (program_state.current_state == ViewCollection) {
         pause_menu->clear();
         pause_menu = &collection_menu;
-        pause_menu->clear();
         pause_menu->draw();
-        program_state.current_state = Paused;
+        program_state.current_state = PausedViewCollection;
       }
 
       if (ch == 27) {
         program_state.current_state = PreviousState;
       }
 
-      if (program_state.current_state != Paused) {
+      if (program_state.current_state != Paused && program_state.current_state != PausedViewCollection) {
           if (program_state.current_state == PreviousState) {
             program_state.current_state = program_state.previous_state;
 

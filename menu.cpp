@@ -131,6 +131,10 @@ void Menu::reset() {
 MenuCollection::MenuCollection(std::vector<Menu*> menus) :
 Menu(*menus[0]), menus(menus), selected_menu_index(0) {}
 
+int MenuCollection::get_selected_menu_index() const {
+  return selected_menu_index;
+}
+
 void MenuCollection::draw() const {
   menus[selected_menu_index]->clear();
   menus[selected_menu_index]->draw();
@@ -139,16 +143,19 @@ void MenuCollection::draw() const {
 bool MenuCollection::handle_input(int input_key, GameState& game_state) {
   if (selected_menu_index != -1 && (input_key == 'h' || input_key == KEY_LEFT)) {
     menus[selected_menu_index]->reset();
+    menus[selected_menu_index]->clear();
     selected_menu_index = (menus.size() - 1 + selected_menu_index) % menus.size();
     return true;
   }
   else if (selected_menu_index != -1 && (input_key == 'l' || input_key == KEY_RIGHT)) {
     menus[selected_menu_index]->reset();
+    menus[selected_menu_index]->clear();
     selected_menu_index = ++selected_menu_index % menus.size();
     return true;
   }
   state prev_state = game_state.current_state;
   if (menus[selected_menu_index]->handle_input(input_key, game_state)) {
+    menus[selected_menu_index]->clear();
     if (game_state.current_state == NextMenu) {
       game_state.current_state = prev_state;
       menus[selected_menu_index]->reset();

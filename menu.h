@@ -46,6 +46,8 @@ class MenuCollection : public Menu {
 public:
   MenuCollection(std::vector<Menu*> menus);
 
+  int get_selected_menu_index() const;
+
   void draw() const override;
   bool handle_input(int input_key, GameState& game_state) override;
 
