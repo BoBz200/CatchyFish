@@ -15,7 +15,10 @@
 int get_fish_rarity_color(Rarity rarity);
 std::vector<std::string> get_fish_variety_text(FishVariety name);
 std::vector<std::string> get_fish_rarity_text(Rarity rarity);
+
 std::vector<std::string> get_number_text(int number);
+void draw_fish_size(float size, int start_y, int start_x, int color = 0);
+
 bool prepare_color();
 std::vector<FishVariety> build_fishing_pool();
 
@@ -313,7 +316,7 @@ int main() {
       }
       break;
 
-    case Caught: {
+    case Caught:
       caught_menu.draw();
 
       TextBoxCentered::draw(get_fish_rarity_text(chosen_fish.get_rarity()),
@@ -325,19 +328,8 @@ int main() {
       if (!collection.is_fish_inside(chosen_fish.get_variety()))
         TextBoxCentered::draw(new_text, 6, 21, (y / 6) + 8, (x / 2) + 15, COLOR_PAIR(4));
 
-      int size = (100 * chosen_fish.get_size());
-      int color = collection.is_fish_bigger(chosen_fish) ? COLOR_PAIR(4) : 0;
-      TextBoxCentered::draw(get_number_text(size / 100),
-                            5, 8, (y / 6) + 20, (x / 2) - (35 / 2), color);
-      TextBoxCentered::draw(period_text,
-                            5, 3, (y / 6) + 20, (x / 2) - (35 / 2) + 8, color);
-      TextBoxCentered::draw(get_number_text((size / 10) % 10),
-                            5, 8, (y / 6) + 20, (x / 2) - (35 / 2) + 10, color);
-      TextBoxCentered::draw(get_number_text(size % 10),
-                            5, 8, (y / 6) + 20, (x / 2) - (35 / 2) + 16, color);
-      TextBoxCentered::draw(m_text,
-                            5, 11, (y / 6) + 20, (x / 2) - (35 / 2) + 24, color);
-      // mvprintw(0, 0, "%d.%dm", size / 100, size % 100);
+      draw_fish_size(chosen_fish.get_size(), (y / 6) + 20, (x / 2) - (35 / 2),
+                     collection.is_fish_bigger(chosen_fish) ? COLOR_PAIR(4) : 0);
 
       ch = getch();
       if (caught_menu.handle_input(ch, program_state)) {
@@ -369,43 +361,70 @@ int main() {
         fishing_bobber_waiting1.draw();
       }
       break;
-    }
 
     case PausedViewCollection:
       if (collection_menu.get_selected_menu_index() == 0) {
         TextBoxCentered::draw(collection.is_fish_inside(Catfish) ?
                               get_fish_variety_text(Catfish) : unknown_fish_text,
                               8, 34, (y / 6) + 12, (x / 5 * 0) + (x / 10) - (34 / 2));
+        if (collection.is_fish_inside(Catfish))
+          draw_fish_size(collection.get_fish_size(Catfish), (y / 6) + 22, (x / 5 * 0) + (x / 10) - (35 / 2));
+
         TextBoxCentered::draw(collection.is_fish_inside(Bass) ?
                               get_fish_variety_text(Bass) : unknown_fish_text,
                               8, 24, (y / 6) + 12, (x / 5 * 1) + (x / 10) - (24 / 2));
+        if (collection.is_fish_inside(Bass))
+          draw_fish_size(collection.get_fish_size(Bass) , (y / 6) + 22, (x / 5 * 1) + (x / 10) - (35 / 2));
+
         TextBoxCentered::draw(collection.is_fish_inside(Cod) ?
                               get_fish_variety_text(Cod) : unknown_fish_text,
                               8, 24, (y / 6) + 12, (x / 5 * 2) + (x / 10) - (24 / 2));
+        if (collection.is_fish_inside(Cod))
+          draw_fish_size(collection.get_fish_size(Cod), (y / 6) + 22, (x / 5 * 2) + (x / 10) - (35 / 2));
+
         TextBoxCentered::draw(collection.is_fish_inside(Trout) ?
                               get_fish_variety_text(Trout) : unknown_fish_text,
                               8, 28, (y / 6) + 12, (x / 5 * 3) + (x / 10) - (28 / 2));
+        if (collection.is_fish_inside(Trout))
+          draw_fish_size(collection.get_fish_size(Trout), (y / 6) + 22, (x / 5 * 3) + (x / 10) - (35 / 2));
+
         TextBoxCentered::draw(collection.is_fish_inside(Bluegill) ?
                               get_fish_variety_text(Bluegill) : unknown_fish_text,
                               8, 32, (y / 6) + 12, (x / 5 * 4) + (x / 10) - (32 / 2));
+        if (collection.is_fish_inside(Bluegill))
+          draw_fish_size(collection.get_fish_size(Bluegill), (y / 6) + 22, (x / 5 * 4) + (x / 10) - (35 / 2));
+
       }
+
       if (collection_menu.get_selected_menu_index() == 1) {
         TextBoxCentered::draw(collection.is_fish_inside(Salmon) ?
                               get_fish_variety_text(Salmon) : unknown_fish_text,
                               8, 38, (y / 6) + 12, (x / 2 * 0) + (x / 4) - (38 / 2));
+          if (collection.is_fish_inside(Salmon))
+            draw_fish_size(collection.get_fish_size(Salmon), (y / 6) + 22, (x / 4 * 0) + (x / 4) - (35 / 2));
+
         TextBoxCentered::draw(collection.is_fish_inside(Crawfish) ?
                               get_fish_variety_text(Crawfish) : unknown_fish_text,
                               8, 42, (y / 6) + 12, (x / 2 * 1) + (x / 4) - (42 / 2));
+          if (collection.is_fish_inside(Crawfish))
+            draw_fish_size(collection.get_fish_size(Crawfish), (y / 6) + 22, (x / 4 * 1) + (x / 4) - (35 / 2));
+
       }
       if (collection_menu.get_selected_menu_index() == 2) {
         TextBoxCentered::draw(collection.is_fish_inside(Eel) ?
                               get_fish_variety_text(Eel) : unknown_fish_text,
                               8, 20, (y / 6) + 12, (x / 1 * 0) + (x / 2) - (20 / 2));
+          if (collection.is_fish_inside(Eel))
+            draw_fish_size(collection.get_fish_size(Eel), (y / 6) + 22, (x / 1 * 0) + (x / 2) - (35 / 2));
+
       }
       if (collection_menu.get_selected_menu_index() == 3) {
         TextBoxCentered::draw(collection.is_fish_inside(Octopus) ?
                               get_fish_variety_text(Octopus) : unknown_fish_text,
                               8, 38, (y / 6) + 12, (x / 1 * 0) + (x / 2) - (38 / 2));
+          if (collection.is_fish_inside(Octopus))
+            draw_fish_size(collection.get_fish_size(Octopus), (y / 6) + 22, (x / 1 * 0) + (x / 2) - (35 / 2));
+
       }
 
     case Paused:
@@ -585,3 +604,14 @@ std::vector<std::string> get_number_text(int number) {
       return zero_text;
   }
 }
+
+void draw_fish_size(float size, int start_y, int start_x, int color) {
+  int size_in_cm = (100 * size);
+  TextBoxCentered::draw(get_number_text(size_in_cm / 100), 5, 8, start_y, start_x, color);
+  TextBoxCentered::draw(period_text, 5, 3, start_y, start_x + 8, color);
+  TextBoxCentered::draw(get_number_text((size_in_cm / 10) % 10), 5, 8, start_y, start_x + 10, color);
+  TextBoxCentered::draw(get_number_text(size_in_cm % 10), 5, 8, start_y, start_x + 16, color);
+  TextBoxCentered::draw(m_text, 5, 11, start_y, start_x + 24, color);
+  // mvprintw(0, 0, "%d.%dm", size / 100, size % 100);
+}
+

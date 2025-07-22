@@ -98,3 +98,15 @@ void Collection::save_to_file() {
   }
   file.close();
 }
+
+// return the size of the fish if it is inside else -1;
+float Collection::get_fish_size(FishVariety fish_variety) {
+  if (!is_fish_inside(fish_variety))
+    return -1;
+
+  for (const Fish& fish : collection) {
+    if (fish.get_variety() == fish_variety)
+      return fish.get_size();
+  }
+  return -1;
+}
