@@ -14,9 +14,6 @@
 
 bool prepare_color();
 std::vector<FishVariety> build_fishing_pool();
-int get_fish_rarity_color(Rarity rarity);
-const std::vector<std::string>& get_fish_variety_text(FishVariety name);
-const std::vector<std::string>& get_fish_rarity_text(Rarity rarity);
 const std::vector<std::string>& get_number_text(int number);
 void draw_fish_size(float size, int start_y, int start_x, int color = 0);
 
@@ -51,7 +48,7 @@ int main() {
   program_state.previous_state = MainMenu;
 
   //catching progress bar
-  VerticleProgressBar bar(27, 5, (y / 2) - (27 / 2), x / 13 * 2);
+  VerticalProgressBar bar(27, 5, (y / 2) - (27 / 2), x / 13 * 2);
 
   // init menus
   int button_width = 48;
@@ -92,8 +89,8 @@ int main() {
         }),
         std::vector<TextBox*>({
           new TextBoxCentered(x_text, 5, 12, 2, 3),
-          new TextBoxCentered(get_fish_rarity_text(Common), 8, 50,
-                              2, x / 2 - (50 / 2), true, get_fish_rarity_color(Common)),
+          new TextBoxCentered(Fish::get_rarity_text(Common), 8, 50,
+                              2, x / 2 - (50 / 2), true, Fish::get_rarity_color(Common)),
           new TextBoxCentered(next_arrow_text, 4, 8, y - 6, x - 12),
         })
       ),
@@ -105,8 +102,8 @@ int main() {
         }),
         std::vector<TextBox*>({
           new TextBoxCentered(x_text, 5, 12, 2, 3),
-          new TextBoxCentered(get_fish_rarity_text(Uncommon), 8, 60,
-                              2, x / 2 - (60 / 2), true, get_fish_rarity_color(Uncommon)),
+          new TextBoxCentered(Fish::get_rarity_text(Uncommon), 8, 60,
+                              2, x / 2 - (60 / 2), true, Fish::get_rarity_color(Uncommon)),
           new TextBoxCentered(prev_arrow_text, 4, 8, y - 6, 4),
           new TextBoxCentered(next_arrow_text, 4, 8, y - 6, x - 12),
         })
@@ -119,8 +116,8 @@ int main() {
         }),
         std::vector<TextBox*>({
           new TextBoxCentered(x_text, 5, 12, 2, 3),
-          new TextBoxCentered(get_fish_rarity_text(Rare), 8, 40,
-                              2, x / 2 - (40 / 2), true, get_fish_rarity_color(Rare)),
+          new TextBoxCentered(Fish::get_rarity_text(Rare), 8, 40,
+                              2, x / 2 - (40 / 2), true, Fish::get_rarity_color(Rare)),
           new TextBoxCentered(prev_arrow_text, 4, 8, y - 6, 4),
           new TextBoxCentered(next_arrow_text, 4, 8, y - 6, x - 12),
         })
@@ -132,8 +129,8 @@ int main() {
         }),
         std::vector<TextBox*>({
           new TextBoxCentered(x_text, 5, 12, 2, 3),
-          new TextBoxCentered(get_fish_rarity_text(Legendary), 8, 70,
-                              2, x / 2 - (70 / 2), true, get_fish_rarity_color(Legendary)),
+          new TextBoxCentered(Fish::get_rarity_text(Legendary), 8, 70,
+                              2, x / 2 - (70 / 2), true, Fish::get_rarity_color(Legendary)),
           new TextBoxCentered(prev_arrow_text, 4, 8, y - 6, 4),
         })
       ),
@@ -334,10 +331,10 @@ int main() {
     case Caught:
       // draw
       caught_menu.draw();
-      TextBoxCentered::draw(get_fish_rarity_text(chosen_fish.get_rarity()),
+      TextBoxCentered::draw(Fish::get_rarity_text(chosen_fish.get_rarity()),
                             6, x / 3 * 2, (y / 6) + 1, (x / 6),
-                            get_fish_rarity_color(chosen_fish.get_rarity()));
-      TextBoxCentered::draw(get_fish_variety_text(chosen_fish.get_variety()),
+                            Fish::get_rarity_color(chosen_fish.get_rarity()));
+      TextBoxCentered::draw(Fish::get_variety_text(chosen_fish.get_variety()),
                             6, x / 3 * 2, (y / 6) + 12, (x / 6));
 
       if (!collection.is_fish_inside(chosen_fish.get_variety()))
@@ -384,31 +381,31 @@ int main() {
       // if viewing common fish
       if (collection_menu.get_selected_menu_index() == 0) {
         TextBoxCentered::draw(collection.is_fish_inside(Catfish) ?
-                              get_fish_variety_text(Catfish) : unknown_fish_text,
+                              Fish::get_variety_text(Catfish) : unknown_fish_text,
                               8, 34, (y / 6) + 12, (x / 5 * 0) + (x / 10) - (34 / 2));
         if (collection.is_fish_inside(Catfish))
           draw_fish_size(collection.get_fish_size(Catfish), (y / 6) + 22, (x / 5 * 0) + (x / 10) - (35 / 2));
 
         TextBoxCentered::draw(collection.is_fish_inside(Bass) ?
-                              get_fish_variety_text(Bass) : unknown_fish_text,
+                              Fish::get_variety_text(Bass) : unknown_fish_text,
                               8, 24, (y / 6) + 12, (x / 5 * 1) + (x / 10) - (24 / 2));
         if (collection.is_fish_inside(Bass))
           draw_fish_size(collection.get_fish_size(Bass) , (y / 6) + 22, (x / 5 * 1) + (x / 10) - (35 / 2));
 
         TextBoxCentered::draw(collection.is_fish_inside(Cod) ?
-                              get_fish_variety_text(Cod) : unknown_fish_text,
+                              Fish::get_variety_text(Cod) : unknown_fish_text,
                               8, 24, (y / 6) + 12, (x / 5 * 2) + (x / 10) - (24 / 2));
         if (collection.is_fish_inside(Cod))
           draw_fish_size(collection.get_fish_size(Cod), (y / 6) + 22, (x / 5 * 2) + (x / 10) - (35 / 2));
 
         TextBoxCentered::draw(collection.is_fish_inside(Trout) ?
-                              get_fish_variety_text(Trout) : unknown_fish_text,
+                              Fish::get_variety_text(Trout) : unknown_fish_text,
                               8, 28, (y / 6) + 12, (x / 5 * 3) + (x / 10) - (28 / 2));
         if (collection.is_fish_inside(Trout))
           draw_fish_size(collection.get_fish_size(Trout), (y / 6) + 22, (x / 5 * 3) + (x / 10) - (35 / 2));
 
         TextBoxCentered::draw(collection.is_fish_inside(Bluegill) ?
-                              get_fish_variety_text(Bluegill) : unknown_fish_text,
+                              Fish::get_variety_text(Bluegill) : unknown_fish_text,
                               8, 32, (y / 6) + 12, (x / 5 * 4) + (x / 10) - (32 / 2));
         if (collection.is_fish_inside(Bluegill))
           draw_fish_size(collection.get_fish_size(Bluegill), (y / 6) + 22, (x / 5 * 4) + (x / 10) - (35 / 2));
@@ -418,13 +415,13 @@ int main() {
       // if viewing uncommon fish
       if (collection_menu.get_selected_menu_index() == 1) {
         TextBoxCentered::draw(collection.is_fish_inside(Salmon) ?
-                              get_fish_variety_text(Salmon) : unknown_fish_text,
+                              Fish::get_variety_text(Salmon) : unknown_fish_text,
                               8, 38, (y / 6) + 12, (x / 2 * 0) + (x / 4) - (38 / 2));
           if (collection.is_fish_inside(Salmon))
             draw_fish_size(collection.get_fish_size(Salmon), (y / 6) + 22, (x / 2 * 0) + (x / 4) - (35 / 2));
 
         TextBoxCentered::draw(collection.is_fish_inside(Crawfish) ?
-                              get_fish_variety_text(Crawfish) : unknown_fish_text,
+                              Fish::get_variety_text(Crawfish) : unknown_fish_text,
                               8, 42, (y / 6) + 12, (x / 2 * 1) + (x / 4) - (42 / 2));
           if (collection.is_fish_inside(Crawfish))
             draw_fish_size(collection.get_fish_size(Crawfish), (y / 6) + 22, (x / 2 * 1) + (x / 4) - (35 / 2));
@@ -434,7 +431,7 @@ int main() {
       // if rare
       if (collection_menu.get_selected_menu_index() == 2) {
         TextBoxCentered::draw(collection.is_fish_inside(Eel) ?
-                              get_fish_variety_text(Eel) : unknown_fish_text,
+                              Fish::Fish::get_variety_text(Eel) : unknown_fish_text,
                               8, 20, (y / 6) + 12, (x / 1 * 0) + (x / 2) - (20 / 2));
           if (collection.is_fish_inside(Eel))
             draw_fish_size(collection.get_fish_size(Eel), (y / 6) + 22, (x / 1 * 0) + (x / 2) - (35 / 2));
@@ -444,7 +441,7 @@ int main() {
       // if legendary
       if (collection_menu.get_selected_menu_index() == 3) {
         TextBoxCentered::draw(collection.is_fish_inside(Octopus) ?
-                              get_fish_variety_text(Octopus) : unknown_fish_text,
+                              Fish::Fish::get_variety_text(Octopus) : unknown_fish_text,
                               8, 38, (y / 6) + 12, (x / 1 * 0) + (x / 2) - (38 / 2));
           if (collection.is_fish_inside(Octopus))
             draw_fish_size(collection.get_fish_size(Octopus), (y / 6) + 22, (x / 1 * 0) + (x / 2) - (35 / 2));
@@ -545,68 +542,6 @@ std::vector<FishVariety> build_fishing_pool() {
   }
 
   return pool;
-}
-
-const std::vector<std::string>& get_fish_variety_text(FishVariety name) {
-  using namespace Assets;
-
-  switch (name) {
-    case Catfish:
-      return catfish_text;
-    case Bass:
-      return bass_text;
-    case Cod:
-        return cod_text;
-    case Trout:
-      return trout_text;
-    case Bluegill:
-      return bluegill_text;
-    case Salmon:
-      return salmon_text;
-    case Crawfish:
-      return crawfish_text;
-    case Eel:
-      return eel_text;
-    case Octopus:
-      return octopus_text;
-    default:
-      return catfish_text;
-  }
-}
-
-const std::vector<std::string>& get_fish_rarity_text(Rarity rarity) {
-  using namespace Assets;
-
-  switch (rarity) {
-    case Common:
-      return common_text;
-    case Uncommon:
-      return uncommon_text;
-    case Rare:
-      return rare_text;
-    case Legendary:
-      return legendary_text;
-    default:
-      return common_text;
-  }
-}
-
-int get_fish_rarity_color(Rarity rarity) {
-  if (!has_colors())
-    return 0;
-
-  switch (rarity) {
-    case Common:
-      return 0;
-    case Uncommon:
-      return COLOR_PAIR(2);
-    case Rare:
-      return COLOR_PAIR(3);
-    case Legendary:
-      return COLOR_PAIR(5);
-    default:
-      return 0;
-  }
 }
 
 const std::vector<std::string>& get_number_text(int number) {

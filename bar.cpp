@@ -35,13 +35,13 @@ void ProgressBar::set_progress(float progress) {
   this-> progress = progress;
 }
 
-VerticleProgressBar::VerticleProgressBar(float progress, int height, int width, int start_y, int start_x) :
+VerticalProgressBar::VerticalProgressBar(float progress, int height, int width, int start_y, int start_x) :
 ProgressBar(progress, height, width, start_y, start_x) {}
 
-VerticleProgressBar::VerticleProgressBar(int height, int width, int start_y, int start_x) :
+VerticalProgressBar::VerticalProgressBar(int height, int width, int start_y, int start_x) :
 ProgressBar(height, width, start_y, start_x) {}
 
-void VerticleProgressBar::draw() const {
+void VerticalProgressBar::draw() const {
   box();
 
   // draw the progress bar

@@ -1,6 +1,8 @@
 #include <string>
+#include <ncurses.h>
 
 #include "fish.h"
+#include "textAssets.h"
 
 Fish::Fish(FishVariety name, float fishing_power, float fish_strength,
            int fish_delay, int random_fish_delay, Rarity rarity, float min_size,
@@ -148,3 +150,66 @@ std::string Fish::get_name() const {
       return "";
   }
 }
+
+const std::vector<std::string>& Fish::get_variety_text(FishVariety name) {
+  using namespace Assets;
+
+  switch (name) {
+    case Catfish:
+      return catfish_text;
+    case Bass:
+      return bass_text;
+    case Cod:
+        return cod_text;
+    case Trout:
+      return trout_text;
+    case Bluegill:
+      return bluegill_text;
+    case Salmon:
+      return salmon_text;
+    case Crawfish:
+      return crawfish_text;
+    case Eel:
+      return eel_text;
+    case Octopus:
+      return octopus_text;
+    default:
+      return catfish_text;
+  }
+}
+
+const std::vector<std::string>& Fish::get_rarity_text(Rarity rarity) {
+  using namespace Assets;
+
+  switch (rarity) {
+    case Common:
+      return common_text;
+    case Uncommon:
+      return uncommon_text;
+    case Rare:
+      return rare_text;
+    case Legendary:
+      return legendary_text;
+    default:
+      return common_text;
+  }
+}
+
+int Fish::get_rarity_color(Rarity rarity) {
+  if (!has_colors())
+    return 0;
+
+  switch (rarity) {
+    case Common:
+      return 0;
+    case Uncommon:
+      return COLOR_PAIR(2);
+    case Rare:
+      return COLOR_PAIR(3);
+    case Legendary:
+      return COLOR_PAIR(5);
+    default:
+      return 0;
+  }
+}
+

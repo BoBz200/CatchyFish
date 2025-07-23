@@ -44,6 +44,10 @@ public:
   // return the variety as a string
   std::string get_name() const;
 
+  static int get_rarity_color(Rarity rarity);
+  static const std::vector<std::string>& get_variety_text(FishVariety name);
+  static const std::vector<std::string>& get_rarity_text(Rarity rarity);
+
 private:
   void init_rarity(Rarity rarity);
   void init_size(float min_size, float max_size);

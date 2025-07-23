@@ -19,10 +19,10 @@ protected:
   int full_char;
 };
 
-class VerticleProgressBar: public ProgressBar {
+class VerticalProgressBar: public ProgressBar {
 public:
-  VerticleProgressBar(float progress, int height, int width, int start_y, int start_x);
-  VerticleProgressBar(int height, int width, int start_y, int start_x);
+  VerticalProgressBar(float progress, int height, int width, int start_y, int start_x);
+  VerticalProgressBar(int height, int width, int start_y, int start_x);
 
   void draw() const override;
 };
